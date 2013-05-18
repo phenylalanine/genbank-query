@@ -32,6 +32,9 @@ repositories {
 
 dependencies {
     groovy group: 'org.biojava', name: 'biojava3-core', version: '3.0'
+    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.5'
+    groovy group: 'org.apache.axis2', name: 'axis2-transport-http', version: '1.6.2'
+    groovy group: 'org.apache.axis2', name: 'axis2-transport-local', version: '1.6.2'
     groovy project(':soap')
 }
 
