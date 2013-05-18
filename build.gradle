@@ -1,0 +1,22 @@
+apply plugin: 'groovy'
+
+allprojects{
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    groovy group: 'org.biojava', name: 'biojava3-core', version: '3.0'
+    groovy project(':soap')
+}
+
+task wrapper(type: Wrapper){
+    gradleVersion = '1.4'
+    jarFile = '.wrapper/wrapper.jar'
+}
+

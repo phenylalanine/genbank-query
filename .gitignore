@@ -1,0 +1,25 @@
+#compiled files
+build/
+out/
+
+#generated intellij project files
+*.iml
+*.ipr
+*.iws
+*.xml
+.idea/
+
+#generated soap files
+soap/src
+soap/build
+
+#generated eclipse project files
+.classpath
+.project
+.settings/
+soap/*.iml
+soap/*.ipr
+soap/*.iws
+soap/.classpath
+soap/.project
+soap/.settings/
