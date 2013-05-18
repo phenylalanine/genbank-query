@@ -4,10 +4,26 @@ allprojects{
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
+    //apply plugin: 'eclipse-wtp'
 
+    //make sure creating the intellij project builds the generated sources
     ideaProject.dependsOn compileJava
     ideaModule.dependsOn compileJava
     ideaWorkspace.dependsOn compileJava
+    cleanIdeaProject.dependsOn compileJava
+    cleanIdeaModule.dependsOn compileJava
+
+    //make sure the creating the eclipse project builds the generated sources
+    cleanEclipseProject.dependsOn compileJava
+    cleanEclipseClasspath.dependsOn compileJava
+    cleanEclipseJdt.dependsOn compileJava
+    //cleanEclipseWtpComponent.dependsOn compileJava
+    //cleanEclipseWtpFacet.dependsOn compileJava
+    eclipseProject.dependsOn compileJava
+    eclipseClasspath.dependsOn compileJava
+    eclipseJdt.dependsOn compileJava
+    //eclipseWtpComponent.dependsOn compileJava
+    //cleanEclipseWtpFacet.dependsOn compileJava
 }
 
 repositories {
