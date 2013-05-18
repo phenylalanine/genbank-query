@@ -4,6 +4,10 @@ allprojects{
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
+
+    ideaProject.dependsOn compileJava
+    ideaModule.dependsOn compileJava
+    ideaWorkspace.dependsOn compileJava
 }
 
 repositories {
