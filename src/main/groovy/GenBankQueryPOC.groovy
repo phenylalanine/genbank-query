@@ -31,7 +31,7 @@ class GenBankQueryPOC {
         // STEP #2: get links in nucleotide database (nuccore)
         // call NCBI ELink utility
         req = new EUtilsServiceStub.ELinkRequest()
-        req.setDb("nuccore")
+        req.setDb(SequenceDatabases.NUCELOTIDE)
         req.setDbfrom("pubmed")
         req.setId(ids)
         res = service.run_eLink(req)
@@ -44,7 +44,7 @@ class GenBankQueryPOC {
         service = new EFetchSequenceServiceStub()
         // call NCBI EFetch utility
         req = new EFetchSequenceServiceStub.EFetchRequest()
-        req.setDb("nuccore")
+        req.setDb(SequenceDatabases.NUCELOTIDE)
         req.setId(fetchIds)
         res = service.run_eFetch(req)
         // results output
