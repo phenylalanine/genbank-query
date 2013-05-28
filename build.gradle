@@ -1,6 +1,6 @@
 apply plugin: 'groovy'
 
-allprojects{
+allprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
@@ -28,14 +28,27 @@ allprojects{
 
 repositories {
     mavenCentral()
+    maven {
+        url 'http://www.biojava.org/download/maven'
+    }
 }
 
 dependencies {
-    groovy group: 'org.biojava', name: 'biojava3-core', version: '3.0'
-    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.5'
+    groovy group: 'org.biojava', name: 'biojava3-core', version: '3.0.+'
+    groovy group: 'org.biojava', name: 'biojava3-genome', version: '3.0.+'
+    groovy group: 'org.biojava', name: 'biojava3-structure', version: '3.0.+'
+    groovy group: 'org.biojava', name: 'biojava3-sequencing', version: '3.0.+'
+    groovy group: 'org.biojava', name: 'biojava3-modfinder', version: '3.0.+'
+    groovy group: 'org.biojava', name: 'biojava3-phylo', version: '3.0.+'
+    groovy group: 'org.biojava', name: 'biojava3-protein-disorder', version: '3.0.+'
+    groovy group: 'org.biojava', name: 'biojava3-protmod', version: '3.0.+'
+    groovy group: 'org.biojava', name: 'core', version: '1.8.+'
+    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.1.3'
     groovy group: 'org.apache.axis2', name: 'axis2-transport-http', version: '1.6.2'
     groovy group: 'org.apache.axis2', name: 'axis2-transport-local', version: '1.6.2'
     groovy group: 'org.spockframework', name: 'spock-core', version: '0.7-groovy-2.0'
+    groovy group: 'commons-net', name: 'commons-net', version: '3.2'
+    groovy group: 'commons-io', name: 'commons-io', version: '2.4'
     groovy project(':soap')
 }
 
