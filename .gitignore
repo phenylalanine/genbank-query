@@ -1,25 +1,27 @@
-#compiled files
-build/
-out/
+*Db.properties
+*Db.script
+.settings
+stacktrace.log
+/*.zip
+/plugin.xml
+/*.log
+/*DB.*
+/cobertura.ser
+.DS_Store
+/target/
+/out/
+/web-app/plugins
+/web-app/WEB-INF/classes
+/.link_to_grails_plugins/
+/target-eclipse/
 
 #generated intellij project files
 *.iml
 *.ipr
 *.iws
-*.xml
 .idea/
-
-#generated soap files
-soap/src
-soap/build
 
 #generated eclipse project files
 .classpath
 .project
 .settings/
-soap/*.iml
-soap/*.ipr
-soap/*.iws
-soap/.classpath
-soap/.project
-soap/.settings/
