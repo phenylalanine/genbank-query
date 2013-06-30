@@ -2,7 +2,7 @@ package webapp
 
 class MeanCodonUsage {
 
-    int organismId
+    Integer organismId
     Map distribution    // use codon as key, e.g. "ACG"
     // there are 64 codons total
 

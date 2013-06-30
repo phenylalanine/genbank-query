@@ -34,5 +34,11 @@ class MeanCodonUsageTests {
         thingThree.distribution = [ACT:0.12]
 
         assert thingThree.validate()
+
+        // test nullable
+        def thingFour = new MeanCodonUsage()
+
+        assert !thingFour.validate()
+        assert "nullable" == thingFour.errors["organismId"]
     }
 }
