@@ -1,4 +1,7 @@
 package edu.pdx.cs.data
+
+import org.biojavax.bio.seq.RichSequence
+
 /**
  * Created with IntelliJ IDEA.
  * User: Ryan
@@ -7,5 +10,5 @@ package edu.pdx.cs.data
  * To change this template use File | Settings | File Templates.
  */
 public interface Processor {
-    public void process();
+    public void process(RichSequence richSequence);
 }

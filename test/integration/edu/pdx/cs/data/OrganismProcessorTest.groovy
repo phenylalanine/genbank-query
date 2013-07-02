@@ -31,8 +31,8 @@ class OrganismProcessorTest {
         when(mockSequence.taxon)thenReturn(mockTaxon)
         when(mockSequence.identifier).thenReturn("1234")
 
-        def processor = new OrganismProcessor(mockSequence)
-        processor.process()
+        def processor = new OrganismProcessor()
+        processor.process(mockSequence)
 
         def newlyCreatedOrganism = Organism.find{organismId == 1234}
 

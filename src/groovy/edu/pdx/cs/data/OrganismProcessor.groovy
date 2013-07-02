@@ -12,14 +12,8 @@ import webapp.Organism
  */
 class OrganismProcessor implements Processor {
 
-    RichSequence richSequence
-
-    OrganismProcessor(RichSequence richSequence) {
-        this.richSequence = richSequence
-    }
-
     @Override
-    void process() {
+    void process(RichSequence richSequence) {
         def organismId = Integer.valueOf(richSequence.identifier)
         def scientificName = richSequence.taxon.getNames("scientific name").first()
         def taxonomyId = richSequence.taxon.NCBITaxID
