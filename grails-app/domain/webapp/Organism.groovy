@@ -8,7 +8,7 @@ class Organism {
     String scientificName
     String taxonomyId
     //A map from taxonomy ranks to values
-    Map taxonomy
+    Map<String, String> taxonomy
 
     static constraints = {
         organismId unique: true, blank: false
@@ -18,6 +18,4 @@ class Organism {
         //for now, we dont require taxonomy, since it is a pain to get at the data
         taxonomy nullable: true
     }
-
-    static hasMany = [taxonomy: String]
 }
