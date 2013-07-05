@@ -73,12 +73,21 @@ class BioConstants {
 	public static final String GGA = "GGA"
 	public static final String GGG = "GGG"
 	
-//	public enum Codon {
-//		TTT, TTC, TTA, TTG, CTT, CTC, CTA, CTG, ATT, ATC, ATA, ATG, GTT, GTC, GTA, GTG,
-//		TCT, TCC, TCA, TCG, CCT, CCC, CCA, CCG, ACT, ACC, ACA, ACG, GCT, GCC, GCA, GCG,
-//		TAT, TAC, TAA, TAG, CAT, CAC, CAA, CAG, AAT, AAC, AAA, AAG, GAT, GAC, GAA, GAG,
-//		TGT, TGC, TGA, TGG, CGT, CGC, CGA, CGG, AGT, AGC, AGA, AGG, GGT, GGC, GGA, GGG
-//	}
+	// List of DNA non-STOP codons used in some of our measures.
+	public static final List<String> codons = [
+		TTT, TTC, TTA, TTG, CTT, CTC, CTA, CTG, ATT, ATC, ATA, ATG, GTT, GTC, GTA, GTG,
+		TCT, TCC, TCA, TCG, CCT, CCC, CCA, CCG, ACT, ACC, ACA, ACG, GCT, GCC, GCA, GCG,
+		TAT, TAC, CAT, CAC, CAA, CAG, AAT, AAC, AAA, AAG, GAT, GAC, GAA, GAG,
+		TGT, TGC, TGG, CGT, CGC, CGA, CGG, AGT, AGC, AGA, AGG, GGT, GGC, GGA, GGG
+	]
+	
+	// List of all DNA codons.
+	public static final List<String> allCodons = [
+		TTT, TTC, TTA, TTG, CTT, CTC, CTA, CTG, ATT, ATC, ATA, ATG, GTT, GTC, GTA, GTG,
+		TCT, TCC, TCA, TCG, CCT, CCC, CCA, CCG, ACT, ACC, ACA, ACG, GCT, GCC, GCA, GCG,
+		TAT, TAC, TAA, TAG, CAT, CAC, CAA, CAG, AAT, AAC, AAA, AAG, GAT, GAC, GAA, GAG,
+		TGT, TGC, TGA, TGG, CGT, CGC, CGA, CGG, AGT, AGC, AGA, AGG, GGT, GGC, GGA, GGG
+	]
 	
 	// The first codon in each value List is always the same as that particular map key,
 	// which might be useful in some applications.  Otherwise, each value's List[0]
@@ -132,7 +141,7 @@ class BioConstants {
 		// Tyrosine (Y)
 		(TAT):[TAT, TAC],
 		(TAC):[TAC, TAT],
-		// The STOP codons.  These are probably NOT considered synonymous in our measures.
+		// The STOP codons.  These are probably NOT considered synonymous or used in our measures.
 		(TAA):[TAA, TAG, TGA],
 		(TAG):[TAG, TAA, TGA],
 		(TGA):[TGA, TAA, TAG],
