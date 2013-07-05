@@ -6,7 +6,7 @@
 
 package edu.pdx.cs.data
 
-class BioConst {
+class BioConstants {
 	// DNA codons, with codons listed in standard genetic code order (TCAG table).
 	public static final String TTT = "TTT"
 	public static final String TTC = "TTC"
