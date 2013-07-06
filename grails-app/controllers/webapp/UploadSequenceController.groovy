@@ -8,13 +8,15 @@ class UploadSequenceController {
 
     def upload() {
         def organismName = params.get("userOrganism")
-        def userSeqFile = request.getFile('userSequenceFile')
+        def userSeqFile = request.getFile("userSequenceFile")
 
         if (userSeqFile == null) {
             response.sendError(400, "Bad Request: userSequenceFile not found")
+            return
         }
         if (organismName == null) {
             response.sendError(400, "Bad Request: organismName param not found")
+            return
         }
 
         // TODO: Perform analysis on userSeqFile.inputStream
