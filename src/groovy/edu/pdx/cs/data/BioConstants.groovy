@@ -73,12 +73,13 @@ class BioConstants {
 	public static final String GGA = "GGA"
 	public static final String GGG = "GGG"
 	
-	// List of DNA non-STOP codons used in some of our measures.
+	// List of DNA non-STOP codons for amino acids with degenerate codings,
+	// used in some of our measures, such as RSCU.
 	public static final List<String> codons = [
-		TTT, TTC, TTA, TTG, CTT, CTC, CTA, CTG, ATT, ATC, ATA, ATG, GTT, GTC, GTA, GTG,
+		TTT, TTC, TTA, TTG, CTT, CTC, CTA, CTG, ATT, ATC, ATA, GTT, GTC, GTA, GTG,
 		TCT, TCC, TCA, TCG, CCT, CCC, CCA, CCG, ACT, ACC, ACA, ACG, GCT, GCC, GCA, GCG,
 		TAT, TAC, CAT, CAC, CAA, CAG, AAT, AAC, AAA, AAG, GAT, GAC, GAA, GAG,
-		TGT, TGC, TGG, CGT, CGC, CGA, CGG, AGT, AGC, AGA, AGG, GGT, GGC, GGA, GGG
+		TGT, TGC, CGT, CGC, CGA, CGG, AGT, AGC, AGA, AGG, GGT, GGC, GGA, GGG
 	]
 	
 	// List of all DNA codons.
@@ -89,7 +90,14 @@ class BioConstants {
 		TGT, TGC, TGA, TGG, CGT, CGC, CGA, CGG, AGT, AGC, AGA, AGG, GGT, GGC, GGA, GGG
 	]
 	
-	// The first codon in each value List is always the same as that particular map key,
+	// List of DNA codons ignored during some measurements, such as RSCU.
+	// (STOP codons, and methionine and tryptophan (single-coded amino acids)).
+	// Can be used with allCodons List to achieve same effect as codons List. 
+	public static final List<String> ignoredCodons = [
+		ATG, TAA, TAG, TGA, TGG
+	]
+	
+	// The first DNA codon in each value List is always the same as that particular map key,
 	// which might be useful in some applications.  Otherwise, each value's List[0]
 	// can be ignored.  Codons can have 1, 2, 3, 4, or 6 synonyms (including themselves).
 	// (Parentheses enclosing keys here are used to avoid a parsing problem in this
