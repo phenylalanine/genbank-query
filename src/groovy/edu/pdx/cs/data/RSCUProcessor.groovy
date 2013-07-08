@@ -10,26 +10,32 @@ import edu.pdx.cs.data.BioConstants
 import org.biojavax.bio.seq.RichSequence
 import webapp.RSCU
 
-class RSCUProcessor implements Processor {
+public class RSCUProcessor implements Processor {
+	def codonsListSize
+	def bigDecimalScale
+	
+	public RSCUProcessor() {
+		codonsListSize = BioConstants.codons.size()
+		bigDecimalScale = 10
+	} 
 	
 	@Override
 	void process(RichSequence richSequence) {
 		def organismId = Integer.valueOf(richSequence.identifier)
 		def sequence = richSequence.seqString()
+		def len = sequence.length()
 		def counts = [:]
 		def RSCUDistribution = [:]
-		def len = sequence.length()
 		def i, j, currSynonymsSize, currSynonymsSum
 		def currCodon
 		def currSynonymsList
-		def bigDecimalScale = 10
 		
 		// Initialize the counts Map to all 0 values.
-		for (i = 0; i < BioConstants.codons.size(); i++) {
+		for (i = 0; i < codonsListSize; i++) {
 			counts[BioConstants.codons[i]] = 0
 		}
-		// Parse the input sequence string for codon triples, ignoring any 1 or 2 leftover bases,
-		// and ignoring any codons in the ignoredCodons List.
+		// Parse the input sequence string for codon triples and count them, ignoring any
+		// 1 or 2 leftover bases, and ignoring any codons in the ignoredCodons List.
 		i = 0
 		while (i + 3 <= len) {
 			currCodon = sequence.substring(i, i + 3)
@@ -38,8 +44,8 @@ class RSCUProcessor implements Processor {
 			i += 3
 		}
 		// Calculate RSCU for each of 59 codons (all except STOPs, methionine, and tryptophan).
-		// Therefore, currently the RSCU processor assumes all input codons are equally-expressed.
-		for (i = 0; i < BioConstants.codons.size(); i++) {
+		// Therefore, currently the RSCU processor assumes all input codons are from equally-expressed genes.
+		for (i = 0; i < codonsListSize; i++) {
 			currCodon = BioConstants.codons[i]
 			currSynonymsList = BioConstants.synonyms[currCodon]
 			currSynonymsSize = currSynonymsList.size()
@@ -59,7 +65,7 @@ class RSCUProcessor implements Processor {
 			new RSCU(
 				organismId: organismId,
 				distribution: RSCUDistribution
-			).save(flush:true)
+			).save(flush: true)
 		} catch (Exception e) {
 			// TODO: log this
 		}

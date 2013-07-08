@@ -1,3 +1,11 @@
+/**
+ * Created with Eclipse!
+ * User: Jim Miller (JGM)
+ * Date: 6/30/13
+ * 
+ * Largely copied from MeanCodonTests.groovy
+ */
+
 package webapp
 
 import grails.test.mixin.*

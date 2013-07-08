@@ -125,5 +125,7 @@ class RSCUProcessorTests {
 		assert createdEntry.distribution["TAG"] == null
 		
 		createdEntry.delete(flush: true)
+		// Make sure sucker is really gone from the database.
+		assert RSCU.find{organismId == 1234} == null
 	}
 }
