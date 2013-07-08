@@ -21,11 +21,13 @@ class ProcessingPipeline {
 
     void process(RichSequenceIterator richSequences){
 
-        RichSequence sequence
-        while (richSequences.hasNext()) {
-            sequence = richSequences.nextRichSequence()
-            this.processors.each { processor->
-                processor.process(sequence)
+        if (processors.size() > 0){  // to prevent looping through sequences in vain
+            RichSequence sequence
+            while (richSequences.hasNext()) {
+                sequence = richSequences.nextRichSequence()
+                this.processors.each { processor->
+                    processor.process(sequence)
+                }
             }
         }
     }
