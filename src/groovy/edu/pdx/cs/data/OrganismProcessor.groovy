@@ -18,10 +18,14 @@ class OrganismProcessor implements Processor {
         def scientificName = richSequence.taxon.getNames("scientific name").first()
         def taxonomyId = richSequence.taxon.NCBITaxID
 
-        new Organism(
-                organismId: organismId,
-                scientificName: scientificName,
-                taxonomyId: taxonomyId
-        ).save()
+        try {
+            new Organism(
+                    organismId: organismId,
+                    scientificName: scientificName,
+                    taxonomyId: taxonomyId
+            ).save(flush: true)
+        } catch (Exception e) {
+            //TODO Log this exception
+        }
     }
 }

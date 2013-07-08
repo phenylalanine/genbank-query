@@ -43,6 +43,7 @@ grails.project.dependency.resolution = {
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         compile group:'org.biojava', name: 'core', version: '1.8.+'
+        compile group: 'commons-net', name: 'commons-net', version: '3.2'
 
         test group: 'org.mockito', name: 'mockito-all', version: '+'
     }
