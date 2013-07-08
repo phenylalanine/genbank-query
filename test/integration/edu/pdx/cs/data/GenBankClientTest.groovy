@@ -59,14 +59,14 @@ class GenBankClientTest {
 
         //check that we list the right # of dirs with no filter
         def fileList = genbankClient
-                .recursivelyGetAllFilesInDirectory("genbank/daily-nc")
-        assert fileList.size() == 196
+                .recursivelyGetAllFilesInDirectory("genbank/catalog")
+        assert !fileList.empty
 
         //check that we list the right # of dirs with a filter
         fileList = genbankClient
                 .recursivelyGetAllFilesInDirectory("genbank/daily-nc") {
             it.name.endsWith("flat.gz")
         }
-        assert fileList.size() == 63
+        assert !fileList.empty
     }
 }
