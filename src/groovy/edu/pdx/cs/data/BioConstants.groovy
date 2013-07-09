@@ -189,4 +189,29 @@ class BioConstants {
 		(GGA):[GGA, GGT, GGC, GGG],
 		(GGG):[GGG, GGT, GGC, GGA]
 	]
+
+    // map of codons by amino acid
+    public static final Map<String, List<String>> aminoAcids = [
+        Ala: [GCT, GCC, GCA, GCG],
+        Arg: [CGT, CGC, CGA, CGG, AGA, AGG],
+        Asn: [AAT, AAC],
+        Asp: [GAT, GAC],
+        Cys: [TGT, TGC],
+        Gln: [CAA, CAG],
+        Glu: [GAA, GAG],
+        Gly: [GGT, GGC, GGA, GGG],
+        His: [CAT, CAC],
+        Ile: [ATT, ATC, ATA],
+        Leu: [TTA, TTG, CTT, CTC, CTA, CTG],
+        Lys: [AAA, AAG],
+        Met: [ATG],
+        Phe: [TTT, TTC],
+        Pro: [CCT, CCC, CCA, CCG],
+        Ser: [TCT, TCC, TCA, TCG, AGT, AGC],
+        Thr: [ACT, ACC, ACA, ACG],
+        Trp: [TGG],
+        Tyr: [TAT, TAC],
+        Val: [GTT, GTC, GTA, GTG],
+        Stop: [TAA, TGA, TAG]
+    ]
 }
