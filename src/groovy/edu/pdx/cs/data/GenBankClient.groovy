@@ -2,6 +2,7 @@ package edu.pdx.cs.data
 
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
+import org.biojava.bio.seq.DNATools
 import org.biojavax.SimpleNamespace
 import org.biojavax.bio.seq.RichSequence
 import org.biojavax.bio.seq.RichSequenceIterator
@@ -57,7 +58,7 @@ class GenBankClient {
      * of the NCBI FTP site and run them through our processing pipeline to analyze
      * and persist the results
      */
-    def processGenBank() {
+    def processGenBank(ProcessingPipeline processors) {
         def genBankFiles = getAllFilesInDirectory("genbank") { file ->
             file.name.endsWith("seq.gz")
         }
@@ -66,7 +67,7 @@ class GenBankClient {
             def is = new GZIPInputStream(ftp.retrieveFileStream(genBankFile))
             def reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(is)))
             RichSequenceIterator sequences = RichSequence.IOTools.readGenbankDNA(reader, new SimpleNamespace("base-genbank"))
-            //TODO pass the sequence iterator to a ProcessingPipeline when it becomes available
+            processors.process(sequences)
         }
     }
 

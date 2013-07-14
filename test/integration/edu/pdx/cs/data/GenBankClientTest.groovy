@@ -20,8 +20,7 @@ class GenBankClientTest {
 
     @Test
     void testClientRetrievesTaxonomyForTaxonomyId() {
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
-        NCBITaxon taxon = genbankClient.getTaxonomyForId(1140)
+        NCBITaxon taxon = GenBankClient.getTaxonomyForId(1140)
 
         assert taxon.containsName("no rank", "cellular organisms")
         assert taxon.containsName("superkingdom", "Bacteria")
