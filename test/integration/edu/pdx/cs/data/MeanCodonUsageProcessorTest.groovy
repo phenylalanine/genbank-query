@@ -22,7 +22,7 @@ class MeanCodonUsageProcessorTest {
 
         when(mockSequence.identifier).thenReturn("1234")
         // string is me typing randomly
-        when(mockSequence.seqString()).thenReturn("GATTACATTACCCGGATTTACGATACCGAAAGTCGATTCAGATATAGAAAGCCATCAT")
+        when(mockSequence.seqString()).thenReturn("gattacattacccggatttacgataccgaaagtcgattcagatatagaaagccatcat")
 
         def processor = new MeanCodonUsageProcessor()
         processor.process(mockSequence)
@@ -42,89 +42,89 @@ class MeanCodonUsageProcessorTest {
         def four = new BigDecimal('4')
         def scale = 10
 
-        assert createdEntry.distribution['GCT'] == '0'
-        assert createdEntry.distribution['GCC'] == '0'
-        assert createdEntry.distribution['GCA'] == '0'
-        assert createdEntry.distribution['GCG'] == '0'
+        assert createdEntry.distribution['gct'] == '0'
+        assert createdEntry.distribution['gcc'] == '0'
+        assert createdEntry.distribution['gca'] == '0'
+        assert createdEntry.distribution['gcg'] == '0'
 
-        assert createdEntry.distribution['CGT'] == zero.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['CGC'] == zero.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['CGA'] == one.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['CGG'] == one.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['AGA'] == two.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['AGG'] == zero.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['cgt'] == zero.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['cgc'] == zero.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['cga'] == one.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['cgg'] == one.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['aga'] == two.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['agg'] == zero.divide(four, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['AAT'] == '0'
-        assert createdEntry.distribution['AAC'] == '0'
+        assert createdEntry.distribution['aat'] == '0'
+        assert createdEntry.distribution['aac'] == '0'
 
-        assert createdEntry.distribution['GAT'] == two.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['GAC'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['gat'] == two.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['gac'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['TGT'] == '0'
-        assert createdEntry.distribution['TGC'] == '0'
+        assert createdEntry.distribution['tgt'] == '0'
+        assert createdEntry.distribution['tgc'] == '0'
 
-        assert createdEntry.distribution['CAA'] == '0'
-        assert createdEntry.distribution['CAG'] == '0'
+        assert createdEntry.distribution['caa'] == '0'
+        assert createdEntry.distribution['cag'] == '0'
 
-        assert createdEntry.distribution['GAA'] == one.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['GAG'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['gaa'] == one.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['gag'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['GGT'] == '0'
-        assert createdEntry.distribution['GGC'] == '0'
-        assert createdEntry.distribution['GGA'] == '0'
-        assert createdEntry.distribution['GGG'] == '0'
+        assert createdEntry.distribution['ggt'] == '0'
+        assert createdEntry.distribution['ggc'] == '0'
+        assert createdEntry.distribution['gga'] == '0'
+        assert createdEntry.distribution['ggg'] == '0'
 
-        assert createdEntry.distribution['CAT'] == '0'
-        assert createdEntry.distribution['CAC'] == '0'
+        assert createdEntry.distribution['cat'] == '0'
+        assert createdEntry.distribution['cac'] == '0'
 
-        assert createdEntry.distribution['ATT'] == two.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['ATC'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['ATA'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['att'] == two.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['atc'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['ata'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['TTA'] == '0'
-        assert createdEntry.distribution['TTG'] == '0'
-        assert createdEntry.distribution['CTT'] == '0'
-        assert createdEntry.distribution['CTC'] == '0'
-        assert createdEntry.distribution['CTA'] == '0'
-        assert createdEntry.distribution['CTG'] == '0'
+        assert createdEntry.distribution['tta'] == '0'
+        assert createdEntry.distribution['ttg'] == '0'
+        assert createdEntry.distribution['ctt'] == '0'
+        assert createdEntry.distribution['ctc'] == '0'
+        assert createdEntry.distribution['cta'] == '0'
+        assert createdEntry.distribution['ctg'] == '0'
 
-        assert createdEntry.distribution['AAA'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['AAG'] == one.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['aaa'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['aag'] == one.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['ATG'] == '0'
+        assert createdEntry.distribution['atg'] == '0'
 
-        assert createdEntry.distribution['TTT'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['TTC'] == one.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['ttt'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['ttc'] == one.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['CCT'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['CCC'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['CCA'] == one.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['CCG'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['cct'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['ccc'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['cca'] == one.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['ccg'] == zero.divide(one, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['TCT'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['TCC'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['TCA'] == one.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['TCG'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['AGT'] == one.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['AGC'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['tct'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['tcc'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['tca'] == one.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['tcg'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['agt'] == one.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['agc'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['ACT'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['ACC'] == two.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['ACA'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['ACG'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['act'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['acc'] == two.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['aca'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['acg'] == zero.divide(two, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['TGG'] == '0'
+        assert createdEntry.distribution['tgg'] == '0'
 
-        assert createdEntry.distribution['TAT'] == one.divide(three, scale, BigDecimal.ROUND_HALF_UP).toString()
-        assert createdEntry.distribution['TAC'] == two.divide(three, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['tat'] == one.divide(three, scale, BigDecimal.ROUND_HALF_UP).toString()
+        assert createdEntry.distribution['tac'] == two.divide(three, scale, BigDecimal.ROUND_HALF_UP).toString()
 
-        assert createdEntry.distribution['GTT'] == '0'
-        assert createdEntry.distribution['GTC'] == '0'
-        assert createdEntry.distribution['GTA'] == '0'
-        assert createdEntry.distribution['GTG'] == '0'
+        assert createdEntry.distribution['gtt'] == '0'
+        assert createdEntry.distribution['gtc'] == '0'
+        assert createdEntry.distribution['gta'] == '0'
+        assert createdEntry.distribution['gtg'] == '0'
 
-        assert createdEntry.distribution['TAA'] == '0'
-        assert createdEntry.distribution['TGA'] == '0'
-        assert createdEntry.distribution['TAG'] == '0'
+        assert createdEntry.distribution['taa'] == '0'
+        assert createdEntry.distribution['tga'] == '0'
+        assert createdEntry.distribution['tag'] == '0'
     }
 }

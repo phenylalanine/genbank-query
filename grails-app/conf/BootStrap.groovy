@@ -13,7 +13,7 @@ class BootStrap  {
         if (!Organism.count()) {
 
             Random random = new Random()
-            def nucleotides = ['U', 'C', 'A', 'G'] as char[]
+            def nucleotides = ['t', 'c', 'a', 'g'] as char[]
             Map aaDistribution  // distribution of codon usage in the sequence
             String key  // key codon
             double fraction    // used for codon fraction assignment

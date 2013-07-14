@@ -21,7 +21,7 @@ class GCPercentageProcessorTest {
 
         when(mockSequence.identifier).thenReturn("1234")
         // string is me typing randomly
-        when(mockSequence.seqString()).thenReturn("GATTACATTACCCGGATTTACGATACCGAAAGTCGATTCAGATATAGAAAGCCATCAT")
+        when(mockSequence.seqString()).thenReturn("gattacattacccggatttacgataccgaaagtcgattcagatatagaaagccatcat")
 
         def processor = new GCPercentageProcessor()
         processor.process(mockSequence)
@@ -35,7 +35,7 @@ class GCPercentageProcessorTest {
         def denom = new BigDecimal("58")
         def scale = 10
         def temp = num.divide(denom, scale, BigDecimal.ROUND_HALF_UP)
-        def str = temp.multiply(new BigDecimal("100")).toString()
+        def str = temp.movePointRight(2).toString()
 
         assert createdEntry.gcPercentage == str
     }

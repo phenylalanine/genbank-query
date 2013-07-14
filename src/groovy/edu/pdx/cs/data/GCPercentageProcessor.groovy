@@ -16,14 +16,15 @@ class GCPercentageProcessor implements Processor {
         def organismId = Integer.valueOf(richSequence.identifier)
         def String gc
         def sequence = richSequence.seqString()
-        def g = sequence.count('G')
-        def c = sequence.count('C')
+        def g = sequence.count('g')
+        def c = sequence.count('c')
         def num = new BigDecimal(g+c)
         def denom = new BigDecimal(sequence.length())
         def scale = 10
 
         def temp = num.divide(denom, scale, BigDecimal.ROUND_HALF_UP)
-        gc = temp.multiply(new BigDecimal("100")).toString()
+        gc = temp.movePointRight(2).toString() // multiplying by 100 added 2 0s at the end, implying more
+                                                    // exactness than was there
 
         try {
             new GCPercentage(

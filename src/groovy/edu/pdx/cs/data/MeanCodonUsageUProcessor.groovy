@@ -2,20 +2,18 @@ package edu.pdx.cs.data
 
 import org.biojavax.bio.seq.RichSequence
 import webapp.MeanCodonUsage
-
-import java.math.RoundingMode
+import webapp.Organism
 
 /**
  * Created with IntelliJ IDEA.
  * User: Laura
- * Date: 7/3/13
- * Time: 12:56 PM
+ * Date: 7/14/13
+ * Time: 11:42 AM
  * To change this template use File | Settings | File Templates.
  */
-class MeanCodonUsageProcessor implements Processor {
+class MeanCodonUsageUProcessor implements UProcessor {
     @Override
-    void process(RichSequence richSequence) {
-        def organismId = Integer.valueOf(richSequence.identifier)
+    public ProcessedUploadedSequence process(RichSequence richSequence) {
         def Map<String, String> distribution = [:]
 
         def String tempStr
@@ -96,15 +94,16 @@ class MeanCodonUsageProcessor implements Processor {
             }
         }
 
-        // save to domain class
+        def rowList = []
 
-        try {
-            new MeanCodonUsage(
-                organismId: organismId,
-                distribution: distribution
-            ).save(flush:true)
-        } catch (Exception e) {
-            // TODO: log this
+        distribution.each {key, value ->
+            rowList += [[key, new BigDecimal(value)]]
         }
+
+        return new ProcessedUploadedSequence (
+                analysis:"Codon Distribution",
+                columns:[["String", "Codon"], ["BigDecimal", "Distribution"]],
+                analysisData:rowList
+        )
     }
 }
