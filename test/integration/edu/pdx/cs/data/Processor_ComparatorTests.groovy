@@ -15,6 +15,7 @@ import webapp.GCPercentage
 import webapp.MeanCodonUsage
 import webapp.Organism
 import webapp.RSCU
+import java.math.MathContext
 
 class Processor_ComparatorTests {
 	def bigDecimalScale = 10
@@ -30,14 +31,14 @@ class Processor_ComparatorTests {
 	@Test
 	void testSimilarTo() {
 		def RSCUOne = new RSCU()
-		RSCUOne.organismId = 123
+		RSCUOne.organismId = 1234
 		RSCUOne.distribution = [
 			(BioConstants.ACT):six.divide(four, bigDecimalScale, BigDecimal.ROUND_HALF_UP).toString(),
 			(BioConstants.GGA):three.divide(four, bigDecimalScale, BigDecimal.ROUND_HALF_UP).toString(),
 		]
 		
 		def RSCUTwo = new RSCU()
-		RSCUTwo.organismId = 456
+		RSCUTwo.organismId = 5678
 		RSCUTwo.distribution = [
 			(BioConstants.ACT):six.divide(eight, bigDecimalScale, BigDecimal.ROUND_HALF_UP).toString(),
 			(BioConstants.GGA):three.toString()
@@ -45,7 +46,7 @@ class Processor_ComparatorTests {
 		
 		// This test closure calls two RSCU objects "similar" if their RSCU values for codon ACT have < 1 difference.
 		def clos = {RSCU currentRSCU, RSCU otherRSCU ->
-					(Math.abs(currentRSCU.distribution.get(BioConstants.ACT).toBigDecimal() - otherRSCU.distribution.get(BioConstants.ACT).toBigDecimal()) < 1) ? true : false
+					(Math.abs(currentRSCU.distribution.get(BioConstants.ACT).toBigDecimal().subtract(otherRSCU.distribution.get(BioConstants.ACT).toBigDecimal(), MathContext.UNLIMITED)) < 1) ? true : false
 				   }
 		
 		assert RSCUOne.isSimilarTo(RSCUTwo, clos)
