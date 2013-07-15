@@ -1,8 +1,8 @@
 package edu.pdx.cs.data
 
+import org.apache.commons.logging.LogFactory
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
-import org.biojava.bio.seq.DNATools
 import org.biojavax.SimpleNamespace
 import org.biojavax.bio.seq.RichSequence
 import org.biojavax.bio.seq.RichSequenceIterator
@@ -21,6 +21,7 @@ import java.util.zip.GZIPInputStream
 
 class GenBankClient {
 
+    private static final log = LogFactory.getLog(this)
     public static final GENBANK_FTP_URL = "ftp.ncbi.nih.gov"
     private final FTPClient ftp
 
@@ -35,22 +36,26 @@ class GenBankClient {
     }
 
     def static getTaxonomyForId(int id) {
-        def xml = new XmlSlurper()
-                .parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=${id}&retmode=xml")
+        try {
+            def xml = new XmlSlurper()
+                    .parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=${id}&retmode=xml")
 
-        NCBITaxon ncbiTaxon = new SimpleNCBITaxon(id)
+            NCBITaxon ncbiTaxon = new SimpleNCBITaxon(id)
 
-        ncbiTaxon.addName("scientific name", xml.Taxon.ScientificName.text())
+            ncbiTaxon.addName("scientific name", xml.Taxon.ScientificName.text())
 
-        xml.Taxon.LineageEx.Taxon.each { taxon ->
-            ncbiTaxon.addName(taxon.Rank.text(), taxon.ScientificName.text())
+            xml.Taxon.LineageEx.Taxon.each { taxon ->
+                ncbiTaxon.addName(taxon.Rank.text(), taxon.ScientificName.text())
+            }
+
+            ncbiTaxon.geneticCode = xml.Taxon.GeneticCode.GCId.text() as Integer
+            ncbiTaxon.mitoGeneticCode = xml.Taxon.MitoGeneticCode.MGCId.text() as Integer
+            ncbiTaxon.parentNCBITaxID = xml.Taxon.ParentTaxId.text() as Integer
+
+            return ncbiTaxon
+        } catch (Exception e) {
+            log.warn("Error retrieving taxonomy information for id: " + id, e)
         }
-
-        ncbiTaxon.geneticCode = xml.Taxon.GeneticCode.GCId.text() as Integer
-        ncbiTaxon.mitoGeneticCode = xml.Taxon.MitoGeneticCode.MGCId.text() as Integer
-        ncbiTaxon.parentNCBITaxID = xml.Taxon.ParentTaxId.text() as Integer
-
-        return ncbiTaxon
     }
 
     /**
@@ -64,10 +69,14 @@ class GenBankClient {
         }
 
         genBankFiles.each { genBankFile ->
-            def is = new GZIPInputStream(ftp.retrieveFileStream(genBankFile))
-            def reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(is)))
-            RichSequenceIterator sequences = RichSequence.IOTools.readGenbankDNA(reader, new SimpleNamespace("base-genbank"))
-            processors.process(sequences)
+            try {
+                def is = new GZIPInputStream(ftp.retrieveFileStream(genBankFile))
+                def reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(is)))
+                RichSequenceIterator sequences = RichSequence.IOTools.readGenbankDNA(reader, new SimpleNamespace("base-genbank"))
+                processors.process(sequences)
+            } catch (Exception e) {
+                log.warn("Error processing GenBank file: " + genBankFile, e)
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package edu.pdx.cs.data
 
+import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
 import webapp.Organism
 
@@ -11,6 +12,8 @@ import webapp.Organism
  * To change this template use File | Settings | File Templates.
  */
 class OrganismProcessor implements Processor {
+
+    private static final log = LogFactory.getLog(this)
 
     @Override
     void process(RichSequence richSequence) {
@@ -25,7 +28,7 @@ class OrganismProcessor implements Processor {
                     taxonomyId: taxonomyId
             ).save(flush: true)
         } catch (Exception e) {
-            //TODO Log this exception
+            log.warn("Error persisting Organism object: ", e)
         }
     }
 }

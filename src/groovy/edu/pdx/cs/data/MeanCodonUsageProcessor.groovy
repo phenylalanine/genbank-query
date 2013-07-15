@@ -1,5 +1,6 @@
 package edu.pdx.cs.data
 
+import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
 import webapp.MeanCodonUsage
 
@@ -13,6 +14,9 @@ import java.math.RoundingMode
  * To change this template use File | Settings | File Templates.
  */
 class MeanCodonUsageProcessor implements Processor {
+
+    private static final log = LogFactory.getLog(this)
+
     @Override
     void process(RichSequence richSequence) {
         def organismId = Integer.valueOf(richSequence.identifier)
@@ -104,7 +108,7 @@ class MeanCodonUsageProcessor implements Processor {
                 distribution: distribution
             ).save(flush:true)
         } catch (Exception e) {
-            // TODO: log this
+            log.warn("Error persisting MeanCodonUsage object: ", e)
         }
     }
 }

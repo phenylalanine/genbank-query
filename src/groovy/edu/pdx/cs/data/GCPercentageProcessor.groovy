@@ -1,5 +1,6 @@
 package edu.pdx.cs.data
 
+import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
 import webapp.GCPercentage
 
@@ -11,6 +12,9 @@ import webapp.GCPercentage
  * To change this template use File | Settings | File Templates.
  */
 class GCPercentageProcessor implements Processor {
+
+    private static final log = LogFactory.getLog(this)
+
     @Override
     void process(RichSequence richSequence) {
         def organismId = Integer.valueOf(richSequence.identifier)
@@ -32,7 +36,7 @@ class GCPercentageProcessor implements Processor {
                     gcPercentage: gc
             ).save(flush:true)
         } catch (Exception e) {
-            //TODO: log this
+            log.warn("Error persisting GCPercentage object: ", e)
         }
     }
 }
