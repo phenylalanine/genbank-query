@@ -21,7 +21,7 @@ class Organism {
         taxonomy nullable: true
     }
 	
-	boolean similarTo(Organism otherOrganism, Closure comparatorClos) {
+	boolean isSimilarTo(Organism otherOrganism, Closure comparatorClos) {
 		return comparatorClos(this, otherOrganism)
 	}
 }

@@ -11,7 +11,7 @@ class GCPercentage {
         gcPercentage blank: false
     }
 	
-	boolean similarTo(GCPercentage otherGCPercentage, Closure comparatorClos) {
+	boolean isSimilarTo(GCPercentage otherGCPercentage, Closure comparatorClos) {
 		return comparatorClos(this, otherGCPercentage)
 	}
 }

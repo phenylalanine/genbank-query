@@ -14,7 +14,7 @@ class MeanCodonUsage {
         organismId unique: true, blank: false
     }
 	
-	boolean similarTo(MeanCodonUsage otherMeanCodonUsage, Closure comparatorClos) {
+	boolean isSimilarTo(MeanCodonUsage otherMeanCodonUsage, Closure comparatorClos) {
 		return comparatorClos(this, otherMeanCodonUsage)
 	}
 }

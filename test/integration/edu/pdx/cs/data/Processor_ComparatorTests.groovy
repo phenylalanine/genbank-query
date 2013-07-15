@@ -48,11 +48,8 @@ class Processor_ComparatorTests {
 					(Math.abs(currentRSCU.distribution.get(BioConstants.ACT).toBigDecimal() - otherRSCU.distribution.get(BioConstants.ACT).toBigDecimal()) < 1) ? true : false
 				   }
 		
-		assert RSCUOne.similarTo(RSCUTwo, clos)
+		assert RSCUOne.isSimilarTo(RSCUTwo, clos)
 		
 		// Similar closures can easily be defined for testing similarity of the other domain classes.
-		
-		RSCUOne.delete(flush: true)
-		RSCUTwo.delete(flush: true)
 	}
 }

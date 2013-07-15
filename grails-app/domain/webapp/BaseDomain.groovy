@@ -11,7 +11,7 @@ package webapp
 
 class BaseDomain {
 
-//	boolean similarTo(BaseDomain otherBaseDomain, Closure comparatorClos) {
+//	boolean isSimilarTo(BaseDomain otherBaseDomain, Closure comparatorClos) {
 //		return comparatorClos(this, otherBaseDomain)
 //	}
 }

@@ -18,7 +18,7 @@ class RSCU {
         organismId unique: true, blank: false
     }
 	
-	boolean similarTo(RSCU otherRSCU, Closure comparatorClos) {
+	boolean isSimilarTo(RSCU otherRSCU, Closure comparatorClos) {
 		return comparatorClos(this, otherRSCU)
     }
 }
