@@ -17,4 +17,8 @@ class RSCU {
     static constraints = {
         organismId unique: true, blank: false
     }
+	
+	boolean similarTo(RSCU otherRSCU, Closure comparatorClos) {
+		return comparatorClos(this, otherRSCU)
+    }
 }

@@ -25,3 +25,9 @@ stacktrace.log
 .classpath
 .project
 .settings/
+
+# JGM-specific stuff
+funkystuff/
+.gitignore
+.gitignore.bak
+.groovy/

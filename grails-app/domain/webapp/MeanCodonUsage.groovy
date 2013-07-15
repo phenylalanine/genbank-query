@@ -1,5 +1,7 @@
 package webapp
 
+import groovy.lang.Closure;
+
 class MeanCodonUsage {
 
     Integer organismId
@@ -11,4 +13,8 @@ class MeanCodonUsage {
     static constraints = {
         organismId unique: true, blank: false
     }
+	
+	boolean similarTo(MeanCodonUsage otherMeanCodonUsage, Closure comparatorClos) {
+		return comparatorClos(this, otherMeanCodonUsage)
+	}
 }

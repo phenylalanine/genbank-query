@@ -1,5 +1,7 @@
 package webapp
 
+import groovy.lang.Closure;
+
 class Organism {
 
     Integer organismId
@@ -18,4 +20,8 @@ class Organism {
         //for now, we dont require taxonomy, since it is a pain to get at the data
         taxonomy nullable: true
     }
+	
+	boolean similarTo(Organism otherOrganism, Closure comparatorClos) {
+		return comparatorClos(this, otherOrganism)
+	}
 }

@@ -1,6 +1,7 @@
 import webapp.GCPercentage
 import webapp.MeanCodonUsage
 import webapp.Organism
+import webapp.RSCU
 
 class BootStrap  {
     def init = { servletContext ->
@@ -60,6 +61,8 @@ class BootStrap  {
                 // add GC%
                 new GCPercentage( organismId: i, gcPercentage: random.nextFloat() * 20 ).save(failOnError: true)
 
+				// (JGM) add RSCU obj, though this is not accurate RSCU distribution data
+				new RSCU( organismId: i, distribution: aaDistribution ).save(failOnError: true)
             }
         }
     }
