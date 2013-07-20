@@ -6,6 +6,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
+// TODO: Change this once not testing
+var localhost = 'http://localhost:8080/webapp';
+
 (function($) {
     // Show modal by default if no query string
     var qmarkIndex = window.location.href.indexOf('?');
@@ -17,4 +20,20 @@
     $('#upload-nav').click(function(event) {
         $('#upload').modal('show');
     });
+
+    // Autocompletion for organism name search text
+    $('.search-query').typeahead({
+        source: function(query, process) {
+            var that = this;
+            console.log(process);
+            var results = $.get(localhost + '/_search_name',
+                { query: query },
+                function(data, status, jqXHR) {
+                    console.log(data);
+                    console.log(that);
+                    process(data.results);
+                });
+        },
+        items: 20
+    })
 })(jQuery);

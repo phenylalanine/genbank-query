@@ -81,7 +81,7 @@
             <li><a href="#" id="upload-nav">Upload Sequence</a></li>
             <li>
                 <form class="navbar-search">
-                    <input type="text" class="search-query" placeholder="Search Organisms">
+                    <input type="text" class="search-query" placeholder="Search Organisms" autocomplete="off">
                 </form>
             </li>
         </ul>

@@ -7,6 +7,10 @@ class UrlMappings {
 			}
 		}
 
+        "/_search_name" {
+            controller = "searchOrganism"
+        }
+
         "/" {
             controller = "main"
         }
