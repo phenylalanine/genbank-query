@@ -9,6 +9,6 @@ import org.biojavax.bio.seq.RichSequence
  * Time: 3:03 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface Processor {
-    public void process(RichSequence richSequence);
+public interface Processor<T> {
+    public T process(RichSequence richSequence);
 }

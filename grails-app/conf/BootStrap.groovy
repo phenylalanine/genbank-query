@@ -3,11 +3,20 @@ import webapp.MeanCodonUsage
 import webapp.Organism
 import webapp.RSCU
 
-class BootStrap  {
+import java.sql.Connection
+import java.sql.DriverManager
+
+class BootStrap {
     def init = { servletContext ->
-
         println "Application starting up... "
+        createFakeData()
+    }
 
+    def destroy = {
+        println "Application shutting down... "
+    }
+
+    def createFakeData() {
         int ORGS = 200   // number of organisms to create for testing
 
         // check whether the test data already exists
@@ -19,25 +28,17 @@ class BootStrap  {
             String key  // key codon
             double fraction    // used for codon fraction assignment
 
-
             // create test data
-            for (int i = 1; i <= ORGS; i++)
-            {
-                // add new test organism
-                new Organism( organismId: i, scientificName: "Organismus Numberus " + i.toString(),
-                        taxonomyId: random.nextInt(1340000) + 1000 ).save(failOnError: true)
-
+            for (int i = 1; i <= ORGS; i++) {
                 // reset codon usage distribution
                 aaDistribution = [:]
 
-
                 // create and assign test codon usage data
                 // for all possible keys
-                for (int i1 = 0; i1 < 4;  i1++)
-                {
-                    for (int i2 = 0; i2 < 4;  i2++)  {
+                for (int i1 = 0; i1 < 4; i1++) {
+                    for (int i2 = 0; i2 < 4; i2++) {
 
-                        for (int i3 = 0; i3 < 4;  i3++){
+                        for (int i3 = 0; i3 < 4; i3++) {
 
                             // generate key codon
                             char c1 = nucleotides[i1]
@@ -55,18 +56,15 @@ class BootStrap  {
                     }
                 }
 
-                // add mean codon usage obj for the organism
-                new MeanCodonUsage( organismId: i, distribution: aaDistribution ).save(failOnError: true)
-
-                // add GC%
-                new GCPercentage( organismId: i, gcPercentage: random.nextFloat() * 20 ).save(failOnError: true)
-
-				// (JGM) add RSCU obj, though this is not accurate RSCU distribution data
-				new RSCU( organismId: i, distribution: aaDistribution ).save(failOnError: true)
+                new Organism(
+                        organismId: i,
+                        scientificName: "Organismus Numberus " + i.toString(),
+                        taxonomyId: random.nextInt(1340000) + 1000,
+                        mcufCodonDistribution: aaDistribution,
+                        rscuCodonDistribution: aaDistribution,
+                        gcPercentage: random.nextFloat() * 20
+                ).save(failOnError: true)
             }
         }
-    }
-    def destroy = {
-        println "Application shutting down... "
     }
 }

@@ -13,13 +13,12 @@ import java.math.RoundingMode
  * Time: 12:56 PM
  * To change this template use File | Settings | File Templates.
  */
-class MeanCodonUsageProcessor implements Processor {
+class MeanCodonUsageProcessor implements Processor<Map<String, String>> {
 
     private static final log = LogFactory.getLog(this)
 
     @Override
-    void process(RichSequence richSequence) {
-        def organismId = Integer.valueOf(richSequence.identifier)
+    Map<String, String> process(RichSequence richSequence) {
         def Map<String, String> distribution = [:]
 
         def String tempStr
@@ -100,15 +99,6 @@ class MeanCodonUsageProcessor implements Processor {
             }
         }
 
-        // save to domain class
-
-        try {
-            new MeanCodonUsage(
-                organismId: organismId,
-                distribution: distribution
-            ).save(flush:true)
-        } catch (Exception e) {
-            log.warn("Error persisting MeanCodonUsage object: ", e)
-        }
+        return distribution
     }
 }
