@@ -1,10 +1,4 @@
-import webapp.GCPercentage
-import webapp.MeanCodonUsage
 import webapp.Organism
-import webapp.RSCU
-
-import java.sql.Connection
-import java.sql.DriverManager
 
 class BootStrap {
     def init = { servletContext ->
