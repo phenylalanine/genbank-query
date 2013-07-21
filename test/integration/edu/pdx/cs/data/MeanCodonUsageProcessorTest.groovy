@@ -2,7 +2,6 @@ package edu.pdx.cs.data
 
 import org.biojavax.bio.seq.RichSequence
 import org.junit.Test
-import webapp.MeanCodonUsage
 
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
