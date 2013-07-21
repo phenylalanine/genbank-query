@@ -2,8 +2,6 @@ package edu.pdx.cs.data
 
 import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
-import webapp.GCPercentage
-import webapp.TransientGCPercentage
 
 /**
  * Created with IntelliJ IDEA.

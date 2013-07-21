@@ -63,7 +63,7 @@ class GenBankClient {
      * of the NCBI FTP site and run them through our processing pipeline to analyze
      * and persist the results
      */
-    def processGenBank(ProcessingPipeline processors) {
+    def processGenBank() {
         def genBankFiles = getAllFilesInDirectory("genbank") { file ->
             file.name.endsWith("seq.gz")
         }
@@ -73,7 +73,11 @@ class GenBankClient {
                 def is = new GZIPInputStream(ftp.retrieveFileStream(genBankFile))
                 def reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(is)))
                 RichSequenceIterator sequences = RichSequence.IOTools.readGenbankDNA(reader, new SimpleNamespace("base-genbank"))
-                processors.process(sequences)
+
+                def processor = new OrganismProcessor()
+                while (sequences.hasNext()){
+                    processor.process(sequences.nextRichSequence())
+                }
             } catch (Exception e) {
                 log.warn("Error processing GenBank file: " + genBankFile, e)
             }

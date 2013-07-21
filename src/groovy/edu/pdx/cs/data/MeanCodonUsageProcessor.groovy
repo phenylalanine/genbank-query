@@ -2,9 +2,6 @@ package edu.pdx.cs.data
 
 import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
-import webapp.MeanCodonUsage
-
-import java.math.RoundingMode
 
 /**
  * Created with IntelliJ IDEA.
