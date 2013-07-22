@@ -3,7 +3,7 @@
  * User: Jim Miller (JGM)
  * Date: 7/13/13
  * 
- * Integration tests for domain classes' similarTo() comparators using closures.
+ * Integration tests for domain classes' isSimilarTo() comparators using closures.
  */
 
 package edu.pdx.cs.data
