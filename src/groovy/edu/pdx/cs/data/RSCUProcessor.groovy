@@ -6,12 +6,14 @@
 
 package edu.pdx.cs.data
 
+import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
 
 public class RSCUProcessor implements Processor<Map<String, String>> {
     def codonsListSize
     def bigDecimalScale
-
+	private static final log = LogFactory.getLog(this)
+	
     public RSCUProcessor() {
         codonsListSize = BioConstants.codons.size()
         bigDecimalScale = 10

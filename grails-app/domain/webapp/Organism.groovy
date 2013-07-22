@@ -1,6 +1,9 @@
 package webapp
 
+import org.apache.commons.logging.LogFactory
+
 class Organism {
+	private static final log = LogFactory.getLog(this)
     //genbankId if the sequence has one
     String organismId
     String taxonomyId
@@ -29,5 +32,26 @@ class Organism {
 	
 	boolean isSimilarTo(Organism otherOrganism, Closure comparatorClos) {
 		return comparatorClos(this, otherOrganism)
+	}
+	
+	// (JGM) This is unfinished.
+	@Override
+	public String toString() {
+		String s = ""
+
+		s += (organismId + "," + taxonomyId + "," + scientificName)
+		s += ("," + gcPercentage)
+		for (e in rscuCodonDistribution)
+			 s += ("," + e.getKey() + "," + e.getValue())
+		for (e in mcufCodonDistribution)
+			s += ("," + e.getKey() + "," + e.getValue())
+		//		} catch (IOException ex){
+		//			log.warn("Error writing to file: Organism.temp", e)
+		//		} finally {
+		//			try {writer.close();} catch (Exception ex) {
+		//				log.warn("Error closing file: Organism.temp", e)
+		//			}
+		//		}
+		return s
 	}
 }
