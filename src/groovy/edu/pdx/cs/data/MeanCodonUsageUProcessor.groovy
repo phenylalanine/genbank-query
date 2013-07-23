@@ -106,4 +106,64 @@ class MeanCodonUsageUProcessor implements UProcessor {
                 analysisData:rowList
         )
     }
+
+    /**
+     * Takes a ProcessedUploadedSequence as constructed by this class's process method
+     * and the name of the uploaded organism.  Returns a text file with the results of the
+     * MCUF analysis.  If uploadedDistribution.analysis != "Codon Distribution" it will
+     * return null.  The file name will be "[organismName]_MCUF.txt"
+     *
+     * @param organismName - name of the uploaded organism
+     * @param uploadedDistribution - must be from this class's process method
+     * @return a text file with the results of the MCUF analysis or null
+     */
+    public static File mcufFileBuilder(String organismName, ProcessedUploadedSequence uploadedDistribution) {
+        Map<String, BigDecimal> distro = [:]
+        List results = []
+        String fileName = organismName + "_MCUF.txt"
+        def storedData = MeanCodonUsage.list()
+        def tempOrganism
+        def BigDecimal sumOfDiffs
+        def BigDecimal mcuf
+        def BigDecimal temp
+        def scale = 10
+
+        // check for incorrect ProcessedUploadedSequence
+        if (uploadedDistribution.analysis != "Codon Distribution") {
+            return null
+        }
+
+        // turn uploadedDistribution back into a map
+        for (item in uploadedDistribution.analysisData) {
+            distro[item[0]] = item[1]
+        }
+
+        // calculate results, store in a list so they can be sorted after
+        for (item in storedData) {
+            tempOrganism = Organism.find{organismId == item.organismId}
+            sumOfDiffs = new BigDecimal('0')
+
+            for (entry in distro.entrySet()) {
+                temp = entry.value.subtract(new BigDecimal(item.distribution[entry.key]))
+                sumOfDiffs = sumOfDiffs.add(temp.abs())
+            }
+
+            mcuf = sumOfDiffs.divide(new BigDecimal("64"), scale, BigDecimal.ROUND_HALF_UP)
+
+            results += [[tempOrganism.scientificName, tempOrganism.taxonomyId, mcuf]]
+        }
+
+        // sort result list by mcuf
+        results = results.sort{a,b -> a[2] <=> b[2]}
+
+        // print to a text file and return file
+        def textFile = new File(fileName)
+        textFile.withWriter { out ->
+            out.writeLine("Scientific Name, Taxonomy ID, Mean Codon Usage Frequency")
+            for (item in results) {
+                out.writeLine(item[0] + ", " + item[1] + ", " + item[2].toString())
+            }
+        }
+        return textFile
+    }
 }

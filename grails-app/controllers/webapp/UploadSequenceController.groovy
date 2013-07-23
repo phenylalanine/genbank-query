@@ -41,6 +41,19 @@ class UploadSequenceController {
         for (p in toRun) {
             results += p.process(richSequence)
         }
+
+//        // code to test the mcufFileBuilder
+//        def File tempFile = MeanCodonUsageUProcessor.mcufFileBuilder(organismName, results[2])
+//
+//        if (tempFile) {
+//            response.setContentType("application/octet-stream")
+//            response.setHeader("Content-disposition", "attachment;filename=${tempFile.getName()}")
+//            tempFile.withInputStream { response.outputStream << it }
+//        } else {
+//            // do nothing
+//        }
+//        tempFile.delete()
+
         // TODO: add data from user selected domain class entry to RSCU results
         // TODO: turn the codon distrobution into MCUF by comparing with stuff in domain class
         // TODO: use results in a view
