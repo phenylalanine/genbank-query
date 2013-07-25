@@ -1,10 +1,6 @@
 package webapp
 
-import edu.pdx.cs.data.GCPercentageUProcessor
-import edu.pdx.cs.data.MeanCodonUsageUProcessor
-import edu.pdx.cs.data.ProcessedUploadedSequence
-import edu.pdx.cs.data.RSCUUProcessor
-import edu.pdx.cs.data.UProcessor
+import edu.pdx.cs.data.OrganismProcessor
 import org.apache.commons.io.IOUtils
 import org.biojava.bio.seq.DNATools
 import org.biojavax.bio.seq.RichSequence
@@ -34,16 +30,10 @@ class UploadSequenceController {
         Sequence sequence = DNATools.createDNASequence(sequenceString, organismName)
         RichSequence richSequence = RichSequence.Tools.enrich(sequence)
 
-        def List<UProcessor> toRun = [new GCPercentageUProcessor(), new RSCUUProcessor(),
-                new MeanCodonUsageUProcessor()]
-        def List<ProcessedUploadedSequence> results = []
-
-        for (p in toRun) {
-            results += p.process(richSequence)
-        }
+        Organism organism = new OrganismProcessor(persist: false).process(richSequence)
 
 //        // code to test the mcufFileBuilder
-//        def File tempFile = MeanCodonUsageUProcessor.mcufFileBuilder(organismName, results[2])
+//        def File tempFile = MeanCodonUsageUProcessor.mcufFileBuilder(organism)
 //
 //        if (tempFile) {
 //            response.setContentType("application/octet-stream")
