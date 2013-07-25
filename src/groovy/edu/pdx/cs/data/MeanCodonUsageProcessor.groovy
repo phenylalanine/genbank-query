@@ -96,38 +96,45 @@ class MeanCodonUsageProcessor implements Processor<Map<String, String>> {
         return distribution
     }
 
-    public static File mcufFileBuilder(Organism uploadedOrganism) {
+    /**
+     * Takes a TransientOrganism (or Organism) and returns a text file
+     * with the completed MCUF analysis
+     *
+     * @param org - the organism to compare everything to for MCUF
+     * @return a text file with the results of the MCUF analysis or null
+     */
+    public static File mcufFileBuilder(Organism org) {
         List results = []
-        String fileName = uploadedOrganism.scientificName + "_MCUF.txt"
+        String fileName = org.scientificName + "_MCUF.txt"
+        def storedData = Organism.list()
         def BigDecimal sumOfDiffs
         def BigDecimal mcuf
+        def BigDecimal temp
         def scale = 10
 
-        def distro = uploadedOrganism.mcufCodonDistribution.collectEntries { [it.key, new BigDecimal(it.value)] }
-
         // calculate results, store in a list so they can be sorted after
-        Organism.list().each { tempOrganism ->
+        for (item in storedData) {
             sumOfDiffs = new BigDecimal('0')
 
-            for (entry in distro.entrySet()) {
-                def temp = entry.value.subtract(new BigDecimal(tempOrganism.mcufCodonDistribution[entry.key]))
+            for (entry in org.mcufCodonDistribution.entrySet()) {
+                temp = (new BigDecimal(entry.value)).subtract(new BigDecimal(item.mcufCodonDistribution[entry.key]))
                 sumOfDiffs = sumOfDiffs.add(temp.abs())
             }
 
             mcuf = sumOfDiffs.divide(new BigDecimal("64"), scale, BigDecimal.ROUND_HALF_UP)
 
-            results += [[tempOrganism.scientificName, tempOrganism.taxonomyId, mcuf]]
+            results += [[item.scientificName, item.taxonomyId, mcuf]]
         }
 
         // sort result list by mcuf
-        results = results.sort { a, b -> a[2] <=> b[2] }
+        results = results.sort{a,b -> a[2] <=> b[2]}
 
         // print to a text file and return file
         def textFile = new File(fileName)
         textFile.withWriter { out ->
             out.writeLine("Scientific Name, Taxonomy ID, Mean Codon Usage Frequency")
             for (item in results) {
-                out.writeLine(item.join(", "))
+                out.writeLine(item[0] + ", " + item[1] + ", " + item[2].toString())
             }
         }
         return textFile

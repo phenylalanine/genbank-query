@@ -47,7 +47,7 @@ class OrganismProcessor implements Processor<Organism> {
             } else {
                 new TransientOrganism(
                         organismId: organismId,
-                        scientificName: scientificName,
+                        scientificName: richSequence.name, // gets the name entered by user
                         taxonomyId: taxonomyId,
                         rscuCodonDistribution: rscuCodonDistribution,
                         mcufCodonDistribution: mcufCodonDistribution,
