@@ -1,7 +1,5 @@
 package edu.pdx.cs.data
 
-import org.biojavax.bio.seq.RichSequence
-import org.biojavax.bio.seq.RichSequenceIterator
 import org.biojavax.bio.taxa.NCBITaxon
 import org.junit.Ignore
 import org.junit.Test
@@ -74,7 +72,7 @@ class GenBankClientTest {
 
 
     @Test
-    void testCreateGenomeAssemblyObjects_ProcessGenomeFiles_Euk(){
+    void testCreateGenomeAssemblyObjectsProcessGenomeFilesEuk() {
 
         def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
 
@@ -121,7 +119,7 @@ class GenBankClientTest {
                 'genbank/genomes/Eukaryotes/invertebrates/Drosophila_kikkawai/Dkik_2.0/Primary_Assembly/unplaced_scaffolds/FASTA/unplaced.scaf.fa.gz'
         ]
 
-        def GenomeAssembly [] results =  genbankClient.createGenomeAssemblyObjects(fileList, true)
+        def GenomeAssembly[] results = genbankClient.createGenomeAssemblyObjects(fileList, true)
 
         assert results.size() == 19
 
@@ -134,17 +132,10 @@ class GenBankClientTest {
                 assert it.endsWith(genbankClient.getEukSequenceFileEnding())
             }
         }
-
-
-        def ProcessingPipeline pipeline
-        results.each {
-            genbankClient.processGenomeAssembly(it, pipeline)
-        }
-
     }
 
     @Test
-    void testCreateGenomeAssemblyObjects_ProcessGenomeFiles_Bac(){
+    void testCreateGenomeAssemblyObjectsProcessGenomeFilesBac() {
 
         def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
         def fileList = [
@@ -176,7 +167,7 @@ class GenBankClientTest {
                 'genbank/genomes/Bacteria/Acetobacter_pasteurianus_IFO_3283_26_uid31137/AP011154.fna']
 
 
-        def GenomeAssembly [] results =  genbankClient.createGenomeAssemblyObjects(fileList, false)
+        def GenomeAssembly[] results = genbankClient.createGenomeAssemblyObjects(fileList, false)
 
         assert results.size() == 13
 
@@ -189,18 +180,12 @@ class GenBankClientTest {
                 assert it.endsWith(genbankClient.getBacSequenceFileEnding())
             }
         }
-
-        def ProcessingPipeline pipeline
-
-        results.each {
-            genbankClient.processGenomeAssembly(it, pipeline)
-        }
-
     }
 
     //  Time-consuming tests, good for occasional re-check
-    @Ignore  @Test
-    void testGetEukaryaGemoneFiles(){
+    @Ignore
+    @Test
+    void testGetEukaryaGemoneFiles() {
 
         def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
         def subgroup = "invertebrates"
@@ -211,19 +196,20 @@ class GenBankClientTest {
             it.taxonomyFile.endsWith("ASSEMBLY_INFO")
         }
         assert fileList.each {
-            it.sequenceFiles.each {it.endsWith(".fa.gz")}
+            it.sequenceFiles.each { it.endsWith(".fa.gz") }
         }
     }
 
 
-    @Ignore @Test
-    void testGetBacteriaGemoneFiles(){
+    @Ignore
+    @Test
+    void testGetBacteriaGemoneFiles() {
 
         def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
         def fileList = genbankClient.getAllBacteriaGenomeFiles()
         assert !fileList.empty
 
-        fileList.each {file ->
+        fileList.each { file ->
             println file
         }
 
@@ -231,7 +217,7 @@ class GenBankClientTest {
             it.taxonomyFile.endsWith(".rpt")
         }
         assert fileList.each {
-            it.sequenceFiles.each {it.endsWith(".fna")}
+            it.sequenceFiles.each { it.endsWith(".fna") }
         }
     }
- }
+}

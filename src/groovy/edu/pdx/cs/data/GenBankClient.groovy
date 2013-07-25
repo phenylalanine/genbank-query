@@ -66,7 +66,7 @@ class GenBankClient {
      * of the NCBI FTP site and run them through our processing pipeline to analyze
      * and persist the results
      */
-    def processGenBank(ProcessingPipeline processors) {
+    def processGenBank(persist=true) {
         def genBankFiles = getAllFilesInDirectory("genbank") { file ->
             file.name.endsWith("seq.gz")
         }
@@ -76,7 +76,11 @@ class GenBankClient {
                 def is = new GZIPInputStream(ftp.retrieveFileStream(genBankFile))
                 def reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(is)))
                 RichSequenceIterator sequences = RichSequence.IOTools.readGenbankDNA(reader, new SimpleNamespace("base-genbank"))
-                processors.process(sequences)
+                OrganismProcessor processor = new OrganismProcessor(persist: persist)
+
+                while (sequences.hasNext()){
+                    processor.process(sequences.nextRichSequence())
+                }
             } catch (Exception e) {
                 log.warn("Error processing GenBank file: " + genBankFile, e)
             }
@@ -112,18 +116,18 @@ class GenBankClient {
         return ftp
     }
 
-    def processAllGenomes(ProcessingPipeline pipeline) {
+    def processAllGenomes() {
 
         getAllEukaryaGenomeFiles().each { assembly ->
-            processGenomeAssembly(assembly, pipeline)
+            processGenomeAssembly(assembly)
         }
 
         getAllBacteriaGenomeFiles().each { assembly ->
-            processGenomeAssembly(assembly, pipeline)
+            processGenomeAssembly(assembly)
         }
     }
 
-    /* Relevant info here: ftp://ftp.ncbi.nlm.nih.gov/genomes/Bacteria/ReadMe.txt
+    /** Relevant info here: ftp://ftp.ncbi.nlm.nih.gov/genomes/Bacteria/ReadMe.txt
         "The data for individual microbial genomes are contained in separate folders.
         Directory names approximate organism names (in taxonomy) but not always. For duplicate
         projects, project ID is appended to differentiate them."
@@ -151,7 +155,7 @@ class GenBankClient {
         return createGenomeAssemblyObjects(fileList, false)
     }
 
-    /* Relevant info here: ftp://ftp.ncbi.nih.gov/genbank/genomes/README_ASSEMBLIES
+    /** Relevant info here: ftp://ftp.ncbi.nih.gov/genbank/genomes/README_ASSEMBLIES
         "The files provided include sequences for chromosomes and scaffolds in FASTA format,
         and AGP format files that describe how the chromosomes and scaffolds were assembled from
         the component sequences."
@@ -264,7 +268,7 @@ class GenBankClient {
       This method is supposed to take a GenomeAssembly object, download sequences, and process extracted RichSequences.
      */
 
-    def void processGenomeAssembly(GenomeAssembly genome, ProcessingPipeline pipeline) {
+    def void processGenomeAssembly(GenomeAssembly genome) {
 
         def RichSequenceIterator iterator
         def id = getTaxonomyIDfromAssemblyInfo(genome.taxonomyFile)
@@ -288,7 +292,7 @@ class GenBankClient {
                 // with every FASTA file can be tracked down to a taxon in the future
 
                 // here processing happens
-                // pipeline.process(iterator)
+                //TODO add persistence
 
                 is.close()
                 ftp1.disconnect()

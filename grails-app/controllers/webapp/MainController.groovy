@@ -1,10 +1,6 @@
 package webapp
 
-import edu.pdx.cs.data.GCPercentageUProcessor
-import edu.pdx.cs.data.MeanCodonUsageUProcessor
-import edu.pdx.cs.data.ProcessedUploadedSequence
-import edu.pdx.cs.data.RSCUUProcessor
-import edu.pdx.cs.data.UProcessor
+import edu.pdx.cs.data.OrganismProcessor
 import org.apache.commons.io.IOUtils
 import org.biojava.bio.seq.DNATools
 import org.biojavax.bio.seq.RichSequence
@@ -52,13 +48,8 @@ class MainController {
         org.biojava.bio.seq.Sequence sequence = DNATools.createDNASequence(sequenceString, organismName)
         RichSequence richSequence = RichSequence.Tools.enrich(sequence)
 
-        def List<UProcessor> toRun = [new GCPercentageUProcessor(), new RSCUUProcessor(),
-                new MeanCodonUsageUProcessor()]
-        def List<ProcessedUploadedSequence> results = []
+        Organism organism = new OrganismProcessor(persist: false).process(richSequence)
 
-        for (p in toRun) {
-            results += p.process(richSequence)
-        }
         // TODO: add data from user selected domain class entry to RSCU results
         // TODO: turn the codon distrobution into MCUF by comparing with stuff in domain class
         // TODO: use results in a view

@@ -1,7 +1,6 @@
 package edu.pdx.cs.data
 
 import org.biojavax.bio.seq.RichSequence
-import webapp.GCPercentage
 import org.junit.Test
 import static org.mockito.Mockito.*
 
@@ -24,11 +23,7 @@ class GCPercentageProcessorTest {
         when(mockSequence.seqString()).thenReturn("gattacattacccggatttacgataccgaaagtcgattcagatatagaaagccatcat")
 
         def processor = new GCPercentageProcessor()
-        processor.process(mockSequence)
-
-        def createdEntry = GCPercentage.find{organismId == 1234}
-
-        assert createdEntry.organismId == 1234
+        def gc = processor.process(mockSequence)
 
         // bit of BigDecimal math...
         def num = new BigDecimal("22")
@@ -37,6 +32,6 @@ class GCPercentageProcessorTest {
         def temp = num.divide(denom, scale, BigDecimal.ROUND_HALF_UP)
         def str = temp.movePointRight(2).toString()
 
-        assert createdEntry.gcPercentage == str
+        assert gc == str
     }
 }
