@@ -16,6 +16,7 @@ class MainController {
     def index() {
         def dataMap
         def showUpload
+        def organismId1 = 1
 
         // Check number of params
         if (params.size() > 1) {
@@ -25,9 +26,14 @@ class MainController {
             showUpload = "show"
         }
 
-        dataMap = [upload: showUpload]
+        def codonDist = aminoDist(MeanCodonUsage.list()[organismId1].distribution)
 
+        dataMap = [
+                upload: showUpload,
+                codonDist: codonDist
+        ]
         render(view: "index", model: dataMap)
+        //render aminoDist(MeanCodonUsage.list()[1].distribution)
     }
 
     /*
@@ -64,5 +70,41 @@ class MainController {
         // TODO: use results in a view
 
         response.sendError(200, "Done")     // TODO: Change to response.redirect
+    }
+
+    private def aminoDist(seqDist) {
+        def aminoTable = [
+                "Phenylalanine": ["TTT", "TTC"],
+                "Leucine": ["TTA", "TTG", "CTT", "CTC", "CTA", "CTG"],
+                "Isoleucine": ["ATT", "ATC", "ATA"],
+                "Methionine": ["ATG"],
+                "Valine": ["GTT", "GTC", "GTA", "GTG"],
+                "Serine": ["TCT", "TCC", "TCA", "TCG", "AGT", "AGC"],
+                "Proline": ["CCT", "CCC", "CCA", "CCG"],
+                "Threonine": ["ACT", "ACC", "ACA", "ACG"],
+                "Alanine": ["GCT", "GCC", "GCA", "GCG"],
+                "Tyrosine": ["TAT", "TAC"],
+                "Stop (Ochre)": ["TAA"],
+                "Stop (Amber)": ["TAG"],
+                "Histidine": ["CAT", "CAC"],
+                "Glutamine": ["CAA", "CAG"],
+                "Asparagine": ["AAT", "AAC"],
+                "Lysine": ["AAA", "AAG"],
+                "Aspartic Acid": ["GAT", "GAC"],
+                "Glutamic Acid": ["GAA", "GAG"],
+                "Cysteine": ["TGT", "TGC"],
+                "Stop (Opal)": ["TGA"],
+                "Tryptophan": ["TGG"],
+                "Arginine": ["CGT", "CGC", "CGA", "CGG", "AGA", "AGG"],
+                "Glycine": ["GGT", "GGC", "GGA", "GGG"]
+        ]
+        def dataTables = []
+        for (amino in aminoTable) {
+            dataTables.push([
+                    name: amino.key,
+                    values: amino.value.collectNested { [it, seqDist[it.toLowerCase()]] },
+            ])
+        }
+        return dataTables
     }
 }
