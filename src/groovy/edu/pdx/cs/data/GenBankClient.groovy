@@ -38,7 +38,7 @@ class GenBankClient {
         }
     }
 
-    def static getTaxonomyForId(int id) {
+    static NCBITaxon getTaxonomyForId(int id) {
         try {
             def xml = new XmlSlurper()
                     .parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=${id}&retmode=xml")
