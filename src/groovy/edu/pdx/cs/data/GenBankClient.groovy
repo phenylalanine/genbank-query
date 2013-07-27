@@ -3,6 +3,7 @@ package edu.pdx.cs.data
 import org.apache.commons.logging.LogFactory
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
+import org.apache.commons.net.ftp.FTPFile
 import org.biojavax.SimpleNamespace
 import org.biojavax.bio.seq.RichSequence
 import org.biojavax.bio.seq.RichSequenceIterator
@@ -87,7 +88,7 @@ class GenBankClient {
         }
     }
 
-    def getAllFilesInDirectory(String dir, Closure<Boolean> filter = { true }) {
+    List<String> getAllFilesInDirectory(String dir, Closure<Boolean> filter = { true }) {
         def ftp = getFtpClient(GENBANK_FTP_URL)
         return ftp.listFiles(dir).findAll { filter(it) }.collect { dir + "/" + it.name }
     }
