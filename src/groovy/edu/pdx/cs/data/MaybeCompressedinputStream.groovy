@@ -1,22 +1,45 @@
 package edu.pdx.cs.data
+
+import org.bouncycastle.apache.bzip2.CBZip2InputStream
+import java.util.zip.GZIPInputStream
+import java.util.zip.ZipException
+
 /**
- * Created with IntelliJ IDEA.
- * User: Ryan
- * Date: 7/26/13
- * Time: 8:12 AM
- * To change this template use File | Settings | File Templates.
+ * This is a convenience class for working with different
+ * types of {@link InputStream}s. This will automatically
+ * handle GZIP or BZIP compressed files.
  */
-class MaybeCompressedinputStream extends InputStream {
+class MaybeCompressedInputStream extends InputStream {
 
-    InputStream maybeCompressed
+    private InputStream maybeCompressed
 
-    MaybeCompressedinputStream(InputStream maybeCompressed) {
+    MaybeCompressedInputStream(InputStream maybeCompressed) {
+        this.maybeCompressed = determineCompression(maybeCompressed)
+    }
 
+    private InputStream determineCompression(InputStream maybeCompressed) {
+        maybeCompressed = new BufferedInputStream(maybeCompressed)
+        maybeCompressed.mark(2048)
+
+        try { //maybe its gzipped!
+            return new GZIPInputStream(maybeCompressed)
+        } catch (ZipException ze) {
+            maybeCompressed.reset() //nope!
+        }
+
+        try { //could it be bzipped?
+            return new CBZip2InputStream(maybeCompressed)
+        } catch (IOException ioe){
+            maybeCompressed.reset() //nope!
+        }
+
+        //damn just a plain old boring file, your tax dollars at work
+        return maybeCompressed
     }
 
     @Override
     int read(byte[] b) throws IOException {
-        return maybeCompressed.read()
+        return maybeCompressed.read(b)
     }
 
     @Override
