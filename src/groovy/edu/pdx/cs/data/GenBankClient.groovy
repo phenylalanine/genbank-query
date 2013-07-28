@@ -42,7 +42,9 @@ class GenBankClient {
     static NCBITaxon getTaxonomyForId(int id) {
         try {
             def xml = new XmlSlurper()
-                    .parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=${id}&retmode=xml")
+                    .parse(
+                    "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=${id}&retmode=xml"
+            )
 
             NCBITaxon ncbiTaxon = new SimpleNCBITaxon(id)
 
@@ -59,6 +61,7 @@ class GenBankClient {
             return ncbiTaxon
         } catch (Exception e) {
             log.warn("Error retrieving taxonomy information for id: " + id, e)
+            return null
         }
     }
 
@@ -74,8 +77,7 @@ class GenBankClient {
 
         genBankFiles.each { genBankFile ->
             try {
-                def is = new GZIPInputStream(ftp.retrieveFileStream(genBankFile))
-                def reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(is)))
+                def reader = readRemoteFile(genBankFile)
                 RichSequenceIterator sequences = RichSequence.IOTools.readGenbankDNA(reader, new SimpleNamespace("base-genbank"))
                 OrganismProcessor processor = new OrganismProcessor(persist: persist)
 

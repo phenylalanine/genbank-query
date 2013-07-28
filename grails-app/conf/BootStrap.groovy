@@ -1,13 +1,72 @@
+import groovy.sql.Sql
+import org.hsqldb.cmdline.SqlFile
 import webapp.Organism
+
+import java.sql.Connection
+import java.sql.DriverManager
 
 class BootStrap {
     def init = { servletContext ->
         println "Application starting up... "
-        createFakeData()
+
+        environments {
+            test {
+                createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
+                createFakeData()
+            }
+            development {
+                createBioSQLTables("jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
+                createFakeData()
+            }
+            production {
+                //we dont know what to do here just yet, we definitely dont want to drop
+                //all of the tables on a restart of the application
+            }
+        }
+
     }
 
     def destroy = {
         println "Application shutting down... "
+    }
+
+    def createBioSQLTables(jdbcUrl) {
+        new File("grails-schema").withWriter {
+            def sql = Sql.newInstance(jdbcUrl, "sa", "", "org.h2.Driver")
+            sql.eachRow("SHOW TABLES FROM PUBLIC") { table ->
+                it.writeLine "-------------------------------------"
+                it.writeLine "Table: ${table}:"
+                sql.eachRow("""SHOW COLUMNS FROM ${table.TABLE_NAME} FROM PUBLIC""".toString()) { column ->
+                    it.writeLine "column: ${column}"
+                }
+            }
+        }
+
+        //drop the grails generated tables
+        File hsqlDbDropTables = new File("resources/biosql/hsqldb/drop-tables.sql")
+        SqlFile sqlFile = new SqlFile(hsqlDbDropTables)
+        Connection connection = DriverManager.getConnection(jdbcUrl, "sa", "")
+        sqlFile.setConnection(connection)
+        sqlFile.execute()
+
+        //then create the BioSql tables
+        File hsqlDbCreateSql = new File("resources/biosql/hsqldb/biosqldb-hsqldb.sql")
+        sqlFile = new SqlFile(hsqlDbCreateSql)
+        sqlFile.setConnection(connection)
+        sqlFile.execute()
+
+        connection.close()
+
+        new File("biosql-schema").withWriter {
+            def sql = Sql.newInstance(jdbcUrl, "sa", "", "org.h2.Driver")
+            sql.eachRow("SHOW TABLES FROM PUBLIC") { table ->
+                it.writeLine "-------------------------------------"
+                it.writeLine "Table: ${table}:"
+                sql.eachRow("""SHOW COLUMNS FROM ${table.TABLE_NAME} FROM PUBLIC""".toString()) { column ->
+                    it.writeLine "column: ${column}"
+                }
+            }
+        }
     }
 
     def createFakeData() {

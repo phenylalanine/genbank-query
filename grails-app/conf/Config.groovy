@@ -80,6 +80,9 @@ log4j = {
         info 'file'
     }
 
+    debug 'org.hibernate.SQL'
+    trace 'org.hibernate.type'
+
     //set all of our non-grails loggers to warn level
     warn: 'edu.pdx.cs'
 
