@@ -26,7 +26,8 @@ var localhost = 'http://localhost:8080/webapp';
         source: function(query, process) {
             var that = this;
             console.log(process);
-            var results = $.get(localhost + '/_search_name',
+            //var results = $.get(localhost + '/_search_name',
+            var results = $.get('/webapp/_search_name',
                 { query: query },
                 function(data, status, jqXHR) {
                     console.log(data);

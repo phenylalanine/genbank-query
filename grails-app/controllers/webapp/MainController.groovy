@@ -22,7 +22,8 @@ class MainController {
             showUpload = "show"
         }
 
-        def codonDist = aminoDist(MeanCodonUsage.list()[organismId1].distribution)
+        //def codonDist = aminoDist(MeanCodonUsage.list()[organismId1].distribution)
+        def codonDist = aminoDist(Organism.get(organismId1).mcufCodonDistribution)
 
         dataMap = [
                 upload: showUpload,
