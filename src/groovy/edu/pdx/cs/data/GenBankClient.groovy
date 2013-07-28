@@ -3,6 +3,7 @@ package edu.pdx.cs.data
 import org.apache.commons.logging.LogFactory
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
+import org.apache.commons.net.ftp.FTPFile
 import org.biojavax.SimpleNamespace
 import org.biojavax.bio.seq.RichSequence
 import org.biojavax.bio.seq.RichSequenceIterator
@@ -38,7 +39,7 @@ class GenBankClient {
         }
     }
 
-    def static getTaxonomyForId(int id) {
+    static NCBITaxon getTaxonomyForId(int id) {
         try {
             def xml = new XmlSlurper()
                     .parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=${id}&retmode=xml")
@@ -66,7 +67,7 @@ class GenBankClient {
      * of the NCBI FTP site and run them through our processing pipeline to analyze
      * and persist the results
      */
-    def processGenBank(ProcessingPipeline processors) {
+    def processGenBank(persist = true) {
         def genBankFiles = getAllFilesInDirectory("genbank") { file ->
             file.name.endsWith("seq.gz")
         }
@@ -76,14 +77,18 @@ class GenBankClient {
                 def is = new GZIPInputStream(ftp.retrieveFileStream(genBankFile))
                 def reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(is)))
                 RichSequenceIterator sequences = RichSequence.IOTools.readGenbankDNA(reader, new SimpleNamespace("base-genbank"))
-                processors.process(sequences)
+                OrganismProcessor processor = new OrganismProcessor(persist: persist)
+
+                while (sequences.hasNext()) {
+                    processor.process(sequences.nextRichSequence())
+                }
             } catch (Exception e) {
                 log.warn("Error processing GenBank file: " + genBankFile, e)
             }
         }
     }
 
-    def getAllFilesInDirectory(String dir, Closure<Boolean> filter = { true }) {
+    List<String> getAllFilesInDirectory(String dir, Closure<Boolean> filter = { true }) {
         def ftp = getFtpClient(GENBANK_FTP_URL)
         return ftp.listFiles(dir).findAll { filter(it) }.collect { dir + "/" + it.name }
     }
@@ -112,32 +117,32 @@ class GenBankClient {
         return ftp
     }
 
-    def processAllGenomes(ProcessingPipeline pipeline) {
+    def processAllGenomes() {
 
         getAllEukaryaGenomeFiles().each { assembly ->
-            processGenomeAssembly(assembly, pipeline)
+            processGenomeAssembly(assembly)
         }
 
         getAllBacteriaGenomeFiles().each { assembly ->
-            processGenomeAssembly(assembly, pipeline)
+            processGenomeAssembly(assembly)
         }
     }
 
-    /* Relevant info here: ftp://ftp.ncbi.nlm.nih.gov/genomes/Bacteria/ReadMe.txt
-        "The data for individual microbial genomes are contained in separate folders.
-        Directory names approximate organism names (in taxonomy) but not always. For duplicate
-        projects, project ID is appended to differentiate them."
+    /** Relevant info here: ftp://ftp.ncbi.nlm.nih.gov/genomes/Bacteria/ReadMe.txt
+     "The data for individual microbial genomes are contained in separate folders.
+     Directory names approximate organism names (in taxonomy) but not always. For duplicate
+     projects, project ID is appended to differentiate them."
 
-        "Provided for each chromosome/plasmid:
-            -Summary data (.rpt)
-            -Genbank (.gbk), ASN1 (.asn), binary ASN1 (.val) and fasta (.fna) format sequences
-            -Fasta format gene (.fnn) and protein (.faa) sequences
-            -Gene and protein information (location, strand, product etc.) (.gff and .ptt).
-            -GeneMark, GeneMarkHMM, Glimmer and Prodigal gene predictions
-            -A list of updates since the last release (.rps)."
+     "Provided for each chromosome/plasmid:
+     -Summary data (.rpt)
+     -Genbank (.gbk), ASN1 (.asn), binary ASN1 (.val) and fasta (.fna) format sequences
+     -Fasta format gene (.fnn) and protein (.faa) sequences
+     -Gene and protein information (location, strand, product etc.) (.gff and .ptt).
+     -GeneMark, GeneMarkHMM, Glimmer and Prodigal gene predictions
+     -A list of updates since the last release (.rps)."
 
-        For the purpose of this project, I decided to use .fna and .rpt files for Bacterial genomes. We could
-        also use .gbk files, but they are 4 times larger and average to 8MB per file.
+     For the purpose of this project, I decided to use .fna and .rpt files for Bacterial genomes. We could
+     also use .gbk files, but they are 4 times larger and average to 8MB per file.
      */
     def List<GenomeAssembly> getAllBacteriaGenomeFiles() {
 
@@ -151,36 +156,36 @@ class GenBankClient {
         return createGenomeAssemblyObjects(fileList, false)
     }
 
-    /* Relevant info here: ftp://ftp.ncbi.nih.gov/genbank/genomes/README_ASSEMBLIES
-        "The files provided include sequences for chromosomes and scaffolds in FASTA format,
-        and AGP format files that describe how the chromosomes and scaffolds were assembled from
-        the component sequences."
+    /** Relevant info here: ftp://ftp.ncbi.nih.gov/genbank/genomes/README_ASSEMBLIES
+     "The files provided include sequences for chromosomes and scaffolds in FASTA format,
+     and AGP format files that describe how the chromosomes and scaffolds were assembled from
+     the component sequences."
 
-        "Each assembly directory will contain an ASSEMBLY_INFO file and one or
-        more assembly-unit directories. Many assemblies consist of a single
-        assembly-unit, the Primary Assembly; other assemblies may be comprised
-        of multiple assembly-units."
+     "Each assembly directory will contain an ASSEMBLY_INFO file and one or
+     more assembly-unit directories. Many assemblies consist of a single
+     assembly-unit, the Primary Assembly; other assemblies may be comprised
+     of multiple assembly-units."
 
-        "Each assembly-unit directory will also contain one or more of the following directories
-        (depending on the particular assembly):
-             assembled_chromosomes/
-             placed_scaffolds/
-             unlocalized_scaffolds/
-             unplaced_scaffolds/
-             alt_scaffolds/ (only in alternate loci and patch assembly-units)
-             pseudoautosomal_region/ (only for mammmals)"
+     "Each assembly-unit directory will also contain one or more of the following directories
+     (depending on the particular assembly):
+     assembled_chromosomes/
+     placed_scaffolds/
+     unlocalized_scaffolds/
+     unplaced_scaffolds/
+     alt_scaffolds/ (only in alternate loci and patch assembly-units)
+     pseudoautosomal_region/ (only for mammmals)"
 
-        "The ASSEMBLY_INFO contains assembly meta data.
-        The file structure is as in this example from the GRCh37 assembly.
+     "The ASSEMBLY_INFO contains assembly meta data.
+     The file structure is as in this example from the GRCh37 assembly.
 
-            DATE:<tab>24-FEB-2009 (date assembly was submitted)
-            ORGANISM:<tab>Homo sapiens
-            TAXID:<tab>9606
-            ASSEMBLY LONG NAME:<tab>Genome Reference Consortium Human Reference 37
-            ASSEMBLY SHORT NAME:<tab>GRCh37
-            ASSEMBLY SUBMITTER:<tab>Genome Reference Consortium
-            ASSEMBLY TYPE:<tab>Haploid + alternate loci
-            NUMBER OF ASSEMBLY-UNITS:<tab>10"
+     DATE:<tab>24-FEB-2009 (date assembly was submitted)
+     ORGANISM:<tab>Homo sapiens
+     TAXID:<tab>9606
+     ASSEMBLY LONG NAME:<tab>Genome Reference Consortium Human Reference 37
+     ASSEMBLY SHORT NAME:<tab>GRCh37
+     ASSEMBLY SUBMITTER:<tab>Genome Reference Consortium
+     ASSEMBLY TYPE:<tab>Haploid + alternate loci
+     NUMBER OF ASSEMBLY-UNITS:<tab>10"
      */
 
     def List<GenomeAssembly> getAllEukaryaGenomeFiles() {
@@ -220,12 +225,12 @@ class GenBankClient {
         def String taxonomyFileEnding = (isEukarya) ? EukTaxonomyFileEnding : BacTaxonomyFileEnding
         def String sequenceFileEnding = (isEukarya) ? EukSequenceFileEnding : BacSequenceFileEnding
 
-        def taxonomyInfo = fileList.findAll {it.endsWith(taxonomyFileEnding)}
+        def taxonomyInfo = fileList.findAll { it.endsWith(taxonomyFileEnding) }
         def sequences = fileList - taxonomyInfo
 
         // assert that sequence file endings are correct
         try {
-            sequences.each {assert it.endsWith(sequenceFileEnding)}
+            sequences.each { assert it.endsWith(sequenceFileEnding) }
         } catch (Error e) {
             log.warn("Error creating GenomeAssembly: wrong sequence file extension")
         }
@@ -237,7 +242,7 @@ class GenBankClient {
             genome.taxonomyFile = file
 
             def dir = file.substring(0, file.lastIndexOf(taxonomyFileEnding))
-            def sequenceFiles = sequences.findAll {it.startsWith(dir)}
+            def sequenceFiles = sequences.findAll { it.startsWith(dir) }
             sequences -= sequenceFiles
 
             // eliminate placed_scaffolds if assembled_chromosomes are present
@@ -264,7 +269,7 @@ class GenBankClient {
       This method is supposed to take a GenomeAssembly object, download sequences, and process extracted RichSequences.
      */
 
-    def void processGenomeAssembly(GenomeAssembly genome, ProcessingPipeline pipeline) {
+    def void processGenomeAssembly(GenomeAssembly genome) {
 
         def RichSequenceIterator iterator
         def id = getTaxonomyIDfromAssemblyInfo(genome.taxonomyFile)
@@ -288,7 +293,7 @@ class GenBankClient {
                 // with every FASTA file can be tracked down to a taxon in the future
 
                 // here processing happens
-                // pipeline.process(iterator)
+                //TODO add persistence
 
                 is.close()
                 ftp1.disconnect()
@@ -310,4 +315,8 @@ class GenBankClient {
         return taxID.toInteger()
     }
 
+    BufferedReader readRemoteFile(String remotePath) {
+        InputStream is = new MaybeCompressedInputStream(ftp.retrieveFileStream(remotePath))
+        return new BufferedReader(new InputStreamReader(is))
+    }
 }

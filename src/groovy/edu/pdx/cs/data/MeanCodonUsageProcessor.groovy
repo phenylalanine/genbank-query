@@ -2,9 +2,7 @@ package edu.pdx.cs.data
 
 import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
-import webapp.MeanCodonUsage
-
-import java.math.RoundingMode
+import webapp.Organism
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,13 +11,12 @@ import java.math.RoundingMode
  * Time: 12:56 PM
  * To change this template use File | Settings | File Templates.
  */
-class MeanCodonUsageProcessor implements Processor {
+class MeanCodonUsageProcessor implements Processor<Map<String, String>> {
 
     private static final log = LogFactory.getLog(this)
 
     @Override
-    void process(RichSequence richSequence) {
-        def organismId = Integer.valueOf(richSequence.identifier)
+    Map<String, String> process(RichSequence richSequence) {
         def Map<String, String> distribution = [:]
 
         def String tempStr
@@ -27,25 +24,25 @@ class MeanCodonUsageProcessor implements Processor {
 
         // map to hold counts
         def counts = [
-                ttt:0, ttc:0, tta:0, ttg:0,
-                tct:0, tcc:0, tca:0, tcg:0,
-                tat:0, tac:0, taa:0, tag:0,
-                tgt:0, tgc:0, tga:0, tgg:0,
+                ttt: 0, ttc: 0, tta: 0, ttg: 0,
+                tct: 0, tcc: 0, tca: 0, tcg: 0,
+                tat: 0, tac: 0, taa: 0, tag: 0,
+                tgt: 0, tgc: 0, tga: 0, tgg: 0,
 
-                ctt:0, ctc:0, cta:0, ctg:0,
-                cct:0, ccc:0, cca:0, ccg:0,
-                cat:0, cac:0, caa:0, cag:0,
-                cgt:0, cgc:0, cga:0, cgg:0,
+                ctt: 0, ctc: 0, cta: 0, ctg: 0,
+                cct: 0, ccc: 0, cca: 0, ccg: 0,
+                cat: 0, cac: 0, caa: 0, cag: 0,
+                cgt: 0, cgc: 0, cga: 0, cgg: 0,
 
-                att:0, atc:0, ata:0, atg:0,
-                act:0, acc:0, aca:0, acg:0,
-                aat:0, aac:0, aaa:0, aag:0,
-                agt:0, agc:0, aga:0, agg:0,
+                att: 0, atc: 0, ata: 0, atg: 0,
+                act: 0, acc: 0, aca: 0, acg: 0,
+                aat: 0, aac: 0, aaa: 0, aag: 0,
+                agt: 0, agc: 0, aga: 0, agg: 0,
 
-                gtt:0, gtc:0, gta:0, gtg:0,
-                gct:0, gcc:0, gca:0, gcg:0,
-                gat:0, gac:0, gaa:0, gag:0,
-                ggt:0, ggc:0, gga:0, ggg:0
+                gtt: 0, gtc: 0, gta: 0, gtg: 0,
+                gct: 0, gcc: 0, gca: 0, gcg: 0,
+                gat: 0, gac: 0, gaa: 0, gag: 0,
+                ggt: 0, ggc: 0, gga: 0, ggg: 0
         ]
 
         def i = 0
@@ -53,8 +50,8 @@ class MeanCodonUsageProcessor implements Processor {
 
         // count codons
         // this will have problems if fed something with letters other than A,C,G,T
-        while (i+3 < len) {
-            tempStr = sequence.substring(i, i+3)
+        while (i + 3 < len) {
+            tempStr = sequence.substring(i, i + 3)
             counts[tempStr] += 1
             i += 3
         }
@@ -70,25 +67,21 @@ class MeanCodonUsageProcessor implements Processor {
             if (value.size() == 1) {
                 if (counts[value[0]] == 0) {
                     distribution[value[0]] = '0'
-                }
-                else{
+                } else {
                     distribution[value[0]] = '1'
                 }
-            }
-            else {
+            } else {
                 sum = 0
 
                 for (str in value) {
                     sum += counts[str]
                 }
 
-                if (sum == 0)
-                {
+                if (sum == 0) {
                     for (str in value) {
                         distribution[str] = '0'
                     }
-                }
-                else {
+                } else {
                     denom = new BigDecimal(sum)
 
                     for (str in value) {
@@ -100,15 +93,50 @@ class MeanCodonUsageProcessor implements Processor {
             }
         }
 
-        // save to domain class
+        return distribution
+    }
 
-        try {
-            new MeanCodonUsage(
-                organismId: organismId,
-                distribution: distribution
-            ).save(flush:true)
-        } catch (Exception e) {
-            log.warn("Error persisting MeanCodonUsage object: ", e)
+    /**
+     * Takes a TransientOrganism (or Organism) and returns a text file
+     * with the completed MCUF analysis
+     *
+     * @param org - the organism to compare everything to for MCUF
+     * @return a text file with the results of the MCUF analysis or null
+     */
+    public static File mcufFileBuilder(Organism org) {
+        List results = []
+        String fileName = org.scientificName + "_MCUF.txt"
+        def storedData = Organism.list()
+        def BigDecimal sumOfDiffs
+        def BigDecimal mcuf
+        def BigDecimal temp
+        def scale = 10
+
+        // calculate results, store in a list so they can be sorted after
+        for (item in storedData) {
+            sumOfDiffs = new BigDecimal('0')
+
+            for (entry in org.mcufCodonDistribution.entrySet()) {
+                temp = (new BigDecimal(entry.value)).subtract(new BigDecimal(item.mcufCodonDistribution[entry.key]))
+                sumOfDiffs = sumOfDiffs.add(temp.abs())
+            }
+
+            mcuf = sumOfDiffs.divide(new BigDecimal("64"), scale, BigDecimal.ROUND_HALF_UP)
+
+            results += [[item.scientificName, item.taxonomyId, mcuf]]
         }
+
+        // sort result list by mcuf
+        results = results.sort{a,b -> a[2] <=> b[2]}
+
+        // print to a text file and return file
+        def textFile = new File(fileName)
+        textFile.withWriter { out ->
+            out.writeLine("Scientific Name, Taxonomy ID, Mean Codon Usage Frequency")
+            for (item in results) {
+                out.writeLine(item[0] + ", " + item[1] + ", " + item[2].toString())
+            }
+        }
+        return textFile
     }
 }
