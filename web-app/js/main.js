@@ -6,9 +6,6 @@
  * To change this template use File | Settings | File Templates.
  */
 
-// TODO: Change this once not testing
-var localhost = 'http://localhost:8080/webapp';
-
 (function($) {
     // Show modal by default if no query string
     var qmarkIndex = window.location.href.indexOf('?');
@@ -26,7 +23,6 @@ var localhost = 'http://localhost:8080/webapp';
         source: function(query, process) {
             var that = this;
             console.log(process);
-            //var results = $.get(localhost + '/_search_name',
             var results = $.get('/webapp/_search_name',
                 { query: query },
                 function(data, status, jqXHR) {
