@@ -11,15 +11,19 @@ class BootStrap {
 
         environments {
             test {
-                createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
-                createFakeData()
+				//createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
+				File f = new File("Db-is-converted")
+				if (!f.exists()) {
+					createBioSQLTables("jdbc:h2:file:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
+					createFakeData()
+				}
             }
             development {
                 createBioSQLTables("jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
                 createFakeData()
             }
             production {
-                //we dont know what to do here just yet, we definitely dont want to drop
+                //we dont know what to do here just yet, we definitely don't want to drop
                 //all of the tables on a restart of the application
             }
         }
@@ -67,6 +71,9 @@ class BootStrap {
                 }
             }
         }
+		
+		File f = new File("Db-is-converted")
+		f.createNewFile()
     }
 
     def createFakeData() {
