@@ -82,9 +82,13 @@ class GenBankClient {
 
             if ((entry.getName().equals("nodes.dmp")) || (entry.getName().equals("names.dmp"))) {
 
-                def fout = new FileOutputStream(new File(entry.getName()))
-                tis.copyEntryContents(fout)
-                fout.close()
+                try {
+                    def fout = new FileOutputStream(new File(entry.getName()))
+                    tis.copyEntryContents(fout)
+                    fout.close()
+                } catch (Exception e) {
+                    log.warn("Error in Genbank client saving file to disc: " + entry.getName(), e)
+                }
             }
         }
 
