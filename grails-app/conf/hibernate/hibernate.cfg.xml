@@ -5,6 +5,18 @@
 
 <hibernate-configuration>
     <session-factory>
-        <mapping resource="Taxon.hbm.xml"/>
+        <mapping resource="org.biojavax.bio.SimpleBioEntry.hbm.xml"/>
+        <mapping resource="org.biojavax.bio.SimpleBioEntryRelationship.hbm.xml"/>
+        <mapping resource="org.biojavax.SimpleComment.hbm.xml"/>
+        <mapping resource="org.biojavax.SimpleCrossRef.hbm.xml"/>
+        <mapping resource="org.biojavax.SimpleDocRef.hbm.xml"/>
+        <mapping resource="org.biojavax.bio.seq.SimpleRichFeature.hbm.xml"/>
+        <mapping resource="org.biojavax.bio.seq.SimpleRichFeatureRelationship.hbm.xml"/>
+        <mapping resource="org.biojavax.bio.seq.SimpleRichLocation.hbm.xml"/>
+        <mapping resource="org.biojavax.SimpleNamespace.hbm.xml"/>
+        <mapping resource="org.biojavax.ontology.SimpleComparableOntology.hbm.xml"/>
+        <mapping resource="org.biojavax.bio.taxa.SimpleNCBITaxon.hbm.xml"/>
+        <mapping resource="org.biojavax.ontology.SimpleComparableTerm.hbm.xml"/>
+        <mapping resource="org.biojavax.ontology.SimpleComparableTriple.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

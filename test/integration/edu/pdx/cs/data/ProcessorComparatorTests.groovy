@@ -3,11 +3,13 @@
  * User: Jim Miller (JGM)
  * Date: 7/13/13
  *
- * Integration tests for domain classes' similarTo() comparators using closures.
+ * Integration test for domain classes' similarTo() comparators using closures.
+ * Integration tests for RSCUComparison, RSCUAnalyzer.
  */
 
 package edu.pdx.cs.data
 
+import org.junit.Ignore
 import org.junit.Test
 import webapp.Organism
 
@@ -58,4 +60,49 @@ class ProcessorComparatorTests {
         assert organismOne.isSimilarTo(organismTwo, clos)
         // Similar closures can easily be defined for testing similarity of the other domain classes.
     }
+
+	@Test
+	void TestBasicRSCUComparison() {
+		def organismOne = Organism.get(11)
+		def organismTwo = Organism.get(12)
+		RSCUComparison RSCUComp = new RSCUComparison(organismOne, organismTwo)
+		System.out.println("RSCUComp.getSlope():  " + RSCUComp.getSlope())
+	}
+
+	@Test
+	void TestRSCUComparison() {
+		def organismOne = Organism.get(11)
+		def organismTwo = Organism.get(12)
+		def RSCUComparatorClosure = { Organism currentRSCU, Organism otherRSCU ->
+			RSCUComparison RSCUComp = new RSCUComparison(currentRSCU, otherRSCU)
+			System.out.println("RSCUComp.getSlope():  " + RSCUComp.getSlope())
+			(Math.abs(RSCUComp.getSlope()
+				.subtract(new BigDecimal(1), MathContext.UNLIMITED)) <= new BigDecimal(".1"))
+		}
+
+		assert !organismOne.isSimilarTo(organismTwo, RSCUComparatorClosure)
+	}
+
+    @Ignore
+	@Test
+	void TestRSCUAnalyzer() {
+		def organismOne = Organism.get(11)
+		def organismTwo = Organism.get(12)
+		def orgsList = [organismTwo]
+		def RSCUComparatorClosure = { Organism currentRSCU, Organism otherRSCU ->
+			delegate.RSCUComp = new RSCUComparison(organismOne, organismTwo)
+			(Math.abs(RSCUComp.getSlope()
+					.subtract(new BigDecimal(1), MathContext.UNLIMITED)) > new BigDecimal(".1"))
+		}
+
+		RSCUAnalyzer analyzer = new RSCUAnalyzer(organismOne, orgsList, RSCUComparatorClosure)
+		def returnFile = analyzer.analyze()
+
+//		 BufferedReader br = new BufferedReader(new FileReader("Organismus Numberus 11_RSCU.txt"));
+//		 String line = null;
+//		 while ((line = br.readLine()) != null) {
+//			 System.out.println(line);
+//		 }
+		assert returnFile.length() == 52  // Header line only, no data
+	}
 }
