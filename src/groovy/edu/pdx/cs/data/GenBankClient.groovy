@@ -84,7 +84,7 @@ class GenBankClient {
 
                 try {
                     def fout = new FileOutputStream(new File(entry.getName()))
-                    tis.copyEntryContents(fout)
+                    tis.copyEntryContents(new BufferedOutputStream(fout))
                     fout.close()
                 } catch (Exception e) {
                     log.warn("Error in Genbank client saving file to disc: " + entry.getName(), e)
