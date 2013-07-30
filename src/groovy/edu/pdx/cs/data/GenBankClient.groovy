@@ -74,7 +74,7 @@ class GenBankClient {
         // Download taxdmp archive from ftp://ftp.ncbi.nih.gov/pub/taxonomy/
         def ftp1 = getFtpClient(GENBANK_FTP_URL)
         def InputStream is = ftp1.retrieveFileStream("/pub/taxonomy/taxdump.tar.gz")
-        def TarInputStream tis = new TarInputStream(new BufferedInputStream(new GZIPInputStream(is)))
+        def TarInputStream tis = new TarInputStream(new GZIPInputStream (new BufferedInputStream(is)))
         TarEntry entry;
 
         // Extract and save nodes.dmp and names.dmp
@@ -84,14 +84,16 @@ class GenBankClient {
 
                 try {
                     def fout = new FileOutputStream(new File(entry.getName()))
-                    tis.copyEntryContents(new BufferedOutputStream(fout))
+                    def bos = new BufferedOutputStream(fout)
+                    tis.copyEntryContents(bos)
                     fout.close()
+                    bos.close()
                 } catch (Exception e) {
                     log.warn("Error in Genbank client saving file to disc: " + entry.getName(), e)
                 }
             }
         }
-
+        tis.close()
         is.close()
         ftp1.disconnect()
 
