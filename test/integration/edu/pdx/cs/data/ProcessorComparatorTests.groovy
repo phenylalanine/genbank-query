@@ -9,6 +9,7 @@
 
 package edu.pdx.cs.data
 
+import org.junit.Ignore
 import org.junit.Test
 import webapp.Organism
 
@@ -59,7 +60,7 @@ class ProcessorComparatorTests {
         assert organismOne.isSimilarTo(organismTwo, clos)
         // Similar closures can easily be defined for testing similarity of the other domain classes.
     }
-	
+
 	@Test
 	void TestBasicRSCUComparison() {
 		def organismOne = Organism.get(11)
@@ -67,7 +68,7 @@ class ProcessorComparatorTests {
 		RSCUComparison RSCUComp = new RSCUComparison(organismOne, organismTwo)
 		System.out.println("RSCUComp.getSlope():  " + RSCUComp.getSlope())
 	}
-	
+
 	@Test
 	void TestRSCUComparison() {
 		def organismOne = Organism.get(11)
@@ -78,10 +79,11 @@ class ProcessorComparatorTests {
 			(Math.abs(RSCUComp.getSlope()
 				.subtract(new BigDecimal(1), MathContext.UNLIMITED)) <= new BigDecimal(".1"))
 		}
-		
+
 		assert !organismOne.isSimilarTo(organismTwo, RSCUComparatorClosure)
 	}
 
+    @Ignore
 	@Test
 	void TestRSCUAnalyzer() {
 		def organismOne = Organism.get(11)
