@@ -20,8 +20,8 @@ class BootStrap {
 
         environments {
             test {
-				createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
-
+				createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")\
+				createFakeData()
             }
 			persistentTest {
 				File f = new File("Db-is-converted")
@@ -100,7 +100,7 @@ class BootStrap {
 			RichSequence richSeq
 			int numCodons
 
-            // create test data
+            // create test data:  5000 to 10000 codons for each organism
             for (int i = 1; i <= ORGS; i++) {
 
 				nucleotideSeq = ""
