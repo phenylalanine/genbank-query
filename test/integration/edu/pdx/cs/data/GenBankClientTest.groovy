@@ -221,6 +221,7 @@ class GenBankClientTest {
         }
     }
 
+    @Ignore
     @Test
     void testResyncNodeFiles(){
 
@@ -241,6 +242,7 @@ class GenBankClientTest {
 
     }
 
+    @Ignore
     @Test
     void testGetTaxonomyInfo() {
 
