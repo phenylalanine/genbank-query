@@ -64,16 +64,16 @@ class ProcessorComparatorTests {
 	@Test
 	void TestBasicRSCUComparison() {
 		System.out.println(Organism.count())
-		def organismOne = Organism.get(11)
-		def organismTwo = Organism.get(12)
+		def organismOne = Organism.get(78)
+		def organismTwo = Organism.get(78)
 		RSCUComparison RSCUComp = new RSCUComparison(organismOne, organismTwo)
 		System.out.println("RSCUComp.getSlope():  " + RSCUComp.getSlope())
 	}
 
 	@Test
 	void TestRSCUComparison() {
-		def organismOne = Organism.get(11)
-		def organismTwo = Organism.get(12)
+		def organismOne = Organism.get(71)
+		def organismTwo = Organism.get(78)
 		def RSCUComparatorClosure = { Organism currentRSCU, Organism otherRSCU ->
 			RSCUComparison RSCUComp = new RSCUComparison(currentRSCU, otherRSCU)
 			System.out.println("RSCUComp.getSlope():  " + RSCUComp.getSlope())
@@ -87,8 +87,8 @@ class ProcessorComparatorTests {
     @Ignore
 	@Test
 	void TestRSCUAnalyzer() {
-		def organismOne = Organism.get(11)
-		def organismTwo = Organism.get(12)
+		def organismOne = Organism.get(71)
+		def organismTwo = Organism.get(78)
 		def orgsList = [organismTwo]
 		def RSCUComparatorClosure = { Organism currentRSCU, Organism otherRSCU ->
 			delegate.RSCUComp = new RSCUComparison(organismOne, organismTwo)

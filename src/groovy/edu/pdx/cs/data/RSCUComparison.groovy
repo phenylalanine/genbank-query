@@ -45,7 +45,7 @@ class RSCUComparison {
 		BigDecimal distSize = orgUpload.rscuCodonDistribution.size()
 
 		// First, if any codon's RSCU value is -1, in either organism, discard the comparison
-		// by returning null.
+		// by returning null.  *** Is this a proper way to handle -1 values?? ***
 		List<Map> rscuCodonDistributions = [orgUpload.rscuCodonDistribution, orgGenBank.rscuCodonDistribution]
 		for (dist in rscuCodonDistributions)
 			for (e in dist)

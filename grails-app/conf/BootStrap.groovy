@@ -20,8 +20,10 @@ class BootStrap {
                 createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
 				createFakeData()
             }
+			// (JGM) Use this environment to use test data stored on the file system.
+			// E.g.: grails -Dgrails.env=persistentTest test-app -echoOut --stacktrace -integration edu.pdx.cs.data.ProcessorComparatorTests
             persistentTest {
-                File f = new File("Db-is-converted")
+                File f = new File("Db/Db-is-converted")
                 if (!f.exists()) {
                     createBioSQLTables("jdbc:h2:file:Db/testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
                     createFakeDataAndCalculate()
@@ -81,7 +83,7 @@ class BootStrap {
             }
         }
 
-        File f = new File("Db-is-converted")
+        File f = new File("Db/Db-is-converted")
         f.createNewFile()
     }
 
@@ -149,7 +151,7 @@ class BootStrap {
             RichSequence richSeq
             int numCodons
 
-            // create test data:  5000 to 10000 codons for each organism
+            // (JGM) Create test data:  5000 to 10000 codons for each organism
             for (int i = 1; i <= ORGS; i++) {
 
                 nucleotideSeq = ""
@@ -163,6 +165,7 @@ class BootStrap {
 
                 richSeq = RichSequence.Tools.createRichSequence("temp", nucleotideSeq, dnaAlphabet)
 
+				// (JGM) Create organisms that have real MCUF, etc., analyses based on the random codon data
                 new Organism(
                         organismId: i,
                         scientificName: "Organismus Numberus " + i.toString(),

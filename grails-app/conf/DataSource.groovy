@@ -23,6 +23,8 @@ environments {
             url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
         }
     }
+	// (JGM) Use this environment to use test data stored on the file system.
+	// E.g.: grails -Dgrails.env=persistentTest test-app -echoOut --stacktrace -integration edu.pdx.cs.data.ProcessorComparatorTests
 	persistentTest {
 		dataSource {
 			dbCreate = "update"
