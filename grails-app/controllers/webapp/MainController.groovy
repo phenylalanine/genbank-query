@@ -11,26 +11,19 @@ class MainController {
 
     def index() {
         def dataMap
-        def showUpload
-        def organismId1 = 1
+        def organisms = []
 
-        // Check number of params
-        if (params.size() > 1) {
-            showUpload = "hide"
+        // Check number of params to decide to show modal on load
+        if (flash.keySet().size() > 0) {
+            organisms = flash.get("organisms")
         }
-        else {
-            showUpload = "show"
-        }
-
-        //def codonDist = aminoDist(MeanCodonUsage.list()[organismId1].distribution)
-        def codonDist = aminoDist(Organism.get(organismId1).mcufCodonDistribution)
 
         dataMap = [
-                upload: showUpload,
-                codonDist: codonDist
+                organisms: organisms,
+                codonDistributions: organisms.collect { aminoDist(it) }
         ]
+
         render(view: "index", model: dataMap)
-        //render aminoDist(MeanCodonUsage.list()[1].distribution)
     }
 
     /*
@@ -39,32 +32,57 @@ class MainController {
     userSequenceFile: File
      */
     def upload() {
-        def organismName = params.get("userOrganism")
-        def MultipartFile userSeqFile = request.getFile("userSequenceFile")
+        def organismName0 = params.get("userOrganism0")
+        def MultipartFile userSeqFile0 = request.getFile("userSequenceFile0")
+        def organismName1 = params.get("userOrganism1")
+        def MultipartFile userSeqFile1 = request.getFile("userSequenceFile1")
 
-        if (userSeqFile == null) {
-            response.sendError(400, "Bad Request: userSequenceFile not found")
-            return
+        String sequenceString
+        org.biojava.bio.seq.Sequence sequence
+        RichSequence richSequence
+        def genbankOrganism
+
+        //flash.organisms = []
+        flash.put("organisms", [])
+
+        def genbankOrganismName0 = params.get("genbankOrganism0")
+        def genbankOrganismName1 = params.get("genbankOrganism1")
+
+        if (organismName0 && userSeqFile0) {
+            sequenceString = IOUtils.toString(userSeqFile0.inputStream, "UTF-8").trim()
+            sequence = DNATools.createDNASequence(sequenceString, organismName0)
+            richSequence = RichSequence.Tools.enrich(sequence)
+            flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
         }
-        if (organismName == null) {
-            response.sendError(400, "Bad Request: organismName param not found")
-            return
+        if (organismName1 && userSeqFile1) {
+            sequenceString = IOUtils.toString(userSeqFile1.inputStream, "UTF-8").trim()
+            sequence = DNATools.createDNASequence(sequenceString, organismName1)
+            richSequence = RichSequence.Tools.enrich(sequence)
+            flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
         }
-
-        String sequenceString = IOUtils.toString(userSeqFile.inputStream, "UTF-8")
-        org.biojava.bio.seq.Sequence sequence = DNATools.createDNASequence(sequenceString, organismName)
-        RichSequence richSequence = RichSequence.Tools.enrich(sequence)
-
-        Organism organism = new OrganismProcessor(persist: false).process(richSequence)
+        if (genbankOrganismName0) {
+            genbankOrganism = Organism.find { scientificName == genbankOrganismName0 }
+            if (genbankOrganism) {
+                flash.get("organisms").push(genbankOrganism)
+            }
+        }
+        if (genbankOrganismName1) {
+            genbankOrganism = Organism.find { scientificName == genbankOrganismName1 }
+            if (genbankOrganism) {
+                flash.get("organisms").push(genbankOrganism)
+            }
+        }
 
         // TODO: add data from user selected domain class entry to RSCU results
         // TODO: turn the codon distrobution into MCUF by comparing with stuff in domain class
         // TODO: use results in a view
 
-        response.sendError(200, "Done")     // TODO: Change to response.redirect
+        //response.sendError(200, "Done")     // TODO: Change to response.redirect
+        redirect(action: "index")
     }
 
-    private def aminoDist(seqDist) {
+    private def aminoDist(organism) {
+        def seqDist = organism.mcufCodonDistribution
         def aminoTable = [
                 "Phenylalanine": ["TTT", "TTC"],
                 "Leucine": ["TTA", "TTG", "CTT", "CTC", "CTA", "CTG"],
