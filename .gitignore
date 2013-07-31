@@ -17,6 +17,7 @@ stacktrace.log
 /logs
 nodes.dmp
 names.dmp
+/Db/
 
 #generated intellij project files
 *.iml
@@ -31,6 +32,6 @@ names.dmp
 
 # JGM-specific stuff
 funkystuff/
-.gitignore
-.gitignore.bak
 .groovy/
+#.gitignore
+#.gitignore.bak

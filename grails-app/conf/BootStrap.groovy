@@ -1,9 +1,18 @@
 import groovy.sql.Sql
 import org.hsqldb.cmdline.SqlFile
+
+import edu.pdx.cs.data.GCPercentageProcessor
+import edu.pdx.cs.data.MeanCodonUsageProcessor
+import edu.pdx.cs.data.RSCUProcessor
 import webapp.Organism
 
 import java.sql.Connection
 import java.sql.DriverManager
+
+import org.biojava.bio.symbol.*
+import org.biojava.bio.seq.*
+import org.biojavax.bio.seq.RichSequence
+
 
 class BootStrap {
     def init = { servletContext ->
@@ -14,7 +23,7 @@ class BootStrap {
 				//createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
 				File f = new File("Db-is-converted")
 				if (!f.exists()) {
-					createBioSQLTables("jdbc:h2:file:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
+					createBioSQLTables("jdbc:h2:file:Db/testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
 					createFakeData()
 				}
             }
@@ -77,52 +86,38 @@ class BootStrap {
     }
 
     def createFakeData() {
-        int ORGS = 200   // number of organisms to create for testing
-
         // check whether the test data already exists
-        if (!Organism.count()) {
-
+		if (!Organism.count()) {
+			int ORGS = 200   // number of organisms to create for testing
+			Alphabet dnaAlphabet = DNATools.getDNA();
             Random random = new Random()
-            def nucleotides = ['t', 'c', 'a', 'g'] as char[]
-            Map aaDistribution  // distribution of codon usage in the sequence
-            String key  // key codon
-            double fraction    // used for codon fraction assignment
+            List<String> nucleotides = ["t", "c", "a", "g"]
+			String c1, c2, c3
+			String nucleotideSeq
+			RichSequence richSeq
+			int numCodons
 
             // create test data
             for (int i = 1; i <= ORGS; i++) {
-                // reset codon usage distribution
-                aaDistribution = [:]
 
-                // create and assign test codon usage data
-                // for all possible keys
-                for (int i1 = 0; i1 < 4; i1++) {
-                    for (int i2 = 0; i2 < 4; i2++) {
+				nucleotideSeq = ""
+				numCodons = random.nextInt(10000 - 5000 + 1) + 5000
+				for (int j = 1; j <= numCodons; j++) {
+					c1 = nucleotides.get(random.nextInt(4))
+					c2 = nucleotides.get(random.nextInt(4))
+					c3 = nucleotides.get(random.nextInt(4))
+					nucleotideSeq += (c1 + c2 + c3)
+				}
 
-                        for (int i3 = 0; i3 < 4; i3++) {
-
-                            // generate key codon
-                            char c1 = nucleotides[i1]
-                            char c2 = nucleotides[i2]
-                            char c3 = nucleotides[i3]
-                            key = c1.toString() + c2.toString() + c3.toString()
-
-                            // generate random (small) fraction <= 50%
-                            fraction = (random.nextInt(5000) + 1) / 10000
-
-                            // assign fraction value to the key
-                            aaDistribution.put(key, fraction)
-
-                        }
-                    }
-                }
+				richSeq = RichSequence.Tools.createRichSequence("temp", nucleotideSeq, dnaAlphabet)
 
                 new Organism(
                         organismId: i,
                         scientificName: "Organismus Numberus " + i.toString(),
                         taxonomyId: random.nextInt(1340000) + 1000,
-                        mcufCodonDistribution: aaDistribution,
-                        rscuCodonDistribution: aaDistribution,
-                        gcPercentage: random.nextFloat() * 20
+						mcufCodonDistribution: (new MeanCodonUsageProcessor()).process(richSeq),
+						rscuCodonDistribution: (new RSCUProcessor()).process(richSeq),
+						gcPercentage: (new GCPercentageProcessor()).process(richSeq)
                 ).save(failOnError: true)
             }
         }

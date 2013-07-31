@@ -63,6 +63,7 @@ class ProcessorComparatorTests {
 
 	@Test
 	void TestBasicRSCUComparison() {
+		System.out.println(Organism.count())
 		def organismOne = Organism.get(11)
 		def organismTwo = Organism.get(12)
 		RSCUComparison RSCUComp = new RSCUComparison(organismOne, organismTwo)
