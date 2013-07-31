@@ -3,6 +3,7 @@ package edu.pdx.cs.data
 import org.biojavax.bio.seq.RichSequence
 import org.biojavax.bio.seq.RichSequenceIterator
 import org.biojavax.bio.seq.SimpleRichSequence
+import org.junit.Ignore
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertEquals
  */
 class BioSQLGORMTests {
 
+    @Ignore //this is a long running test, we dont need to run it with every build
     @Test
     void testBioEntryCRUD() {
         //Read in the test sequence file
