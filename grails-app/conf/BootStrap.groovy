@@ -20,13 +20,16 @@ class BootStrap {
 
         environments {
             test {
-				//createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
+				createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
+
+            }
+			persistentTest {
 				File f = new File("Db-is-converted")
 				if (!f.exists()) {
 					createBioSQLTables("jdbc:h2:file:Db/testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
 					createFakeData()
 				}
-            }
+			}
             development {
                 createBioSQLTables("jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
                 createFakeData()
