@@ -13,11 +13,13 @@ import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
 import webapp.Organism
 
+
+// (JGM)  All broken, don't use yet.
 class RSCUAnalyzer {
 	private static final log = LogFactory.getLog(this)
 	Organism orgUpload
 	List<Organism> orgsGenBank
-	RSCUComparison RSCUComp
+	RSCUComparator RSCUComp
 	Closure RSCUComparatorClosure
 	def closureState = [:]
 	

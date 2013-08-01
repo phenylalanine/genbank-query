@@ -15,20 +15,20 @@ import webapp.Organism
 
 class RSCUAnalyzerWithoutSimilarityChecking {
 	private static final log = LogFactory.getLog(this)
-	Organism orgUpload
-	List<Organism> orgsGenBank
+	Organism orgMaster
+	List<Organism> orgsCompared
 	RSCUComparator RSCUComp
 	
-	public RSCUAnalyzerWithoutSimilarityChecking(orgUp, orgsGB) {
-		orgUpload = orgUp
-		orgsGenBank = orgsGB
+	public RSCUAnalyzerWithoutSimilarityChecking(org1, moreOrgs) {
+		orgMaster = org1
+		orgsCompared = moreOrgs
 	}
 	
 	public File analyze() {
 		List results = []
-		String fileName = orgUpload.scientificName + "_RSCU.txt"
-		for (org in orgsGenBank) {
-			RSCUComp = new RSCUComparator(orgUpload, org)
+		String fileName = orgMaster.scientificName + "_RSCU.txt"
+		for (org in orgsCompared) {
+			RSCUComp = new RSCUComparator(orgMaster, org)
 			results += [[org.scientificName, org.taxonomyId, RSCUComp.getSlope(), RSCUComp.getYIntercept()]]
 		}
 		// (JGM) Sort result list by RSCU trendline slope (closest to 1 being the best)
