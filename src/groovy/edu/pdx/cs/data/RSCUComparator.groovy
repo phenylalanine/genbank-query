@@ -14,13 +14,13 @@ import org.apache.commons.logging.LogFactory
 import org.biojavax.bio.seq.RichSequence
 import webapp.Organism
 
-class RSCUComparison {
+class RSCUComparator {
 	private static final log = LogFactory.getLog(this)
 	private int bigDecimalScale
 	private Organism orgUpload, orgGenBank
 	private String trendlineSlope, trendlineYIntercept
 	
-	public RSCUComparison(orgUp, orgGB) {
+	public RSCUComparator(orgUp, orgGB) {
 		bigDecimalScale = 10
 		orgUpload = orgUp
 		orgGenBank = orgGB
