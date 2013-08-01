@@ -3,7 +3,7 @@
  * User: Jim Miller (JGM)
  * Date: 7/21/13
  * 
- * Compare the RSCU analyses of the uploaded organism against a GenBank organism,
+ * Compare the RSCU analyses of the Master (usually uploaded) organism against a Compared (often GenBank) organism,
  * producing a best fit trendline's slope and y-intercept.
  */
 
@@ -17,16 +17,21 @@ import webapp.Organism
 class RSCUComparator {
 	private static final log = LogFactory.getLog(this)
 	private int bigDecimalScale
-	private Organism orgUpload, orgGenBank
+	private Organism orgMaster, orgCompared
 	private String trendlineSlope, trendlineYIntercept
 	
-	public RSCUComparator(orgUp, orgGB) {
+	public RSCUComparator(org1, org2) {
 		bigDecimalScale = 10
-		orgUpload = orgUp
-		orgGenBank = orgGB
+		orgMaster = org1
+		orgCompared = org2
 		compare()
 	}
 	
+	// (JGM) In the returned List, the Master organism's RSCU distribution Map is first.
+	public List<Map<String, String>> getRSCUCodonDistributions() {
+		return [orgMaster.rscuCodonDistribution, orgCompared.rscuCodonDistribution]
+	}
+
 	public BigDecimal getSlope() {
 		return trendlineSlope.toBigDecimal()
 	}
@@ -35,18 +40,18 @@ class RSCUComparator {
 		return trendlineYIntercept.toBigDecimal()
 	}
 	
-	// (JGM) x is the uploaded organism, y is the GenBank organism.
+	// (JGM) x is the Master organism, y is the Compared organism.
 	// Find the best fit line (linear).
 	// http://people.hofstra.edu/stefan_waner/realworld/calctopic1/regression.html
 	private void compare() {
 		BigDecimal sumProducts = new BigDecimal(0), sumXValues = new BigDecimal(0),
 			sumYValues = new BigDecimal(0), sumXSquares = new BigDecimal(0)
 		BigDecimal slopeNumerator, slopeDenominator, slope, yIntercept
-		BigDecimal distSize = orgUpload.rscuCodonDistribution.size()
+		BigDecimal distSize = orgMaster.rscuCodonDistribution.size()
 
 		// First, if any codon's RSCU value is -1, in either organism, discard the comparison
 		// by returning null.  *** Is this a proper way to handle -1 values?? ***
-		List<Map> rscuCodonDistributions = [orgUpload.rscuCodonDistribution, orgGenBank.rscuCodonDistribution]
+		List<Map> rscuCodonDistributions = [orgMaster.rscuCodonDistribution, orgCompared.rscuCodonDistribution]
 		for (dist in rscuCodonDistributions)
 			for (e in dist)
 				if (e.getValue() == "-1") {
@@ -55,13 +60,13 @@ class RSCUComparator {
 					return
 				}
 
-		for (e in orgUpload.rscuCodonDistribution.keySet()) {
-			sumProducts = sumProducts.add(orgUpload.rscuCodonDistribution.get(e).toBigDecimal()
-				.multiply(orgGenBank.rscuCodonDistribution.get(e).toBigDecimal(), MathContext.UNLIMITED),
+		for (e in orgMaster.rscuCodonDistribution.keySet()) {
+			sumProducts = sumProducts.add(orgMaster.rscuCodonDistribution.get(e).toBigDecimal()
+				.multiply(orgCompared.rscuCodonDistribution.get(e).toBigDecimal(), MathContext.UNLIMITED),
 				MathContext.UNLIMITED)
-			sumXValues = sumXValues.add(orgUpload.rscuCodonDistribution.get(e).toBigDecimal(), MathContext.UNLIMITED)
-			sumYValues = sumYValues.add(orgGenBank.rscuCodonDistribution.get(e).toBigDecimal(), MathContext.UNLIMITED)
-			sumXSquares = sumXSquares.add(orgUpload.rscuCodonDistribution.get(e).toBigDecimal().pow(2,
+			sumXValues = sumXValues.add(orgMaster.rscuCodonDistribution.get(e).toBigDecimal(), MathContext.UNLIMITED)
+			sumYValues = sumYValues.add(orgCompared.rscuCodonDistribution.get(e).toBigDecimal(), MathContext.UNLIMITED)
+			sumXSquares = sumXSquares.add(orgMaster.rscuCodonDistribution.get(e).toBigDecimal().pow(2,
 				MathContext.UNLIMITED), MathContext.UNLIMITED)
 		}
 		slopeNumerator = distSize.multiply(sumProducts, MathContext.UNLIMITED)

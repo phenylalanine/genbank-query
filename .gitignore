@@ -20,6 +20,7 @@ names.dmp
 /Db/
 biosql-schema
 grails-schema
+Organismus Numberus*
 
 #generated intellij project files
 *.iml

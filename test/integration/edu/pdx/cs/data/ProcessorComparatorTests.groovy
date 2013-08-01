@@ -4,7 +4,7 @@
  * Date: 7/13/13
  *
  * Integration test for domain classes' similarTo() comparators using closures.
- * Integration tests for RSCUComparison, RSCUAnalyzer.
+ * Integration tests for RSCUComparator, RSCUAnalyzer.
  */
 
 package edu.pdx.cs.data
@@ -62,20 +62,20 @@ class ProcessorComparatorTests {
     }
 
 	@Test
-	void TestBasicRSCUComparison() {
-		System.out.println(Organism.count())
+	void TestBasicRSCUComparator() {
+		System.out.println("Organism.count():  " + Organism.count())
 		def organismOne = Organism.get(78)
 		def organismTwo = Organism.get(78)
-		RSCUComparison RSCUComp = new RSCUComparison(organismOne, organismTwo)
+		RSCUComparator RSCUComp = new RSCUComparator(organismOne, organismTwo)
 		System.out.println("RSCUComp.getSlope():  " + RSCUComp.getSlope())
 	}
 
 	@Test
-	void TestRSCUComparison() {
+	void TestRSCUComparator() {
 		def organismOne = Organism.get(71)
 		def organismTwo = Organism.get(78)
 		def RSCUComparatorClosure = { Organism currentRSCU, Organism otherRSCU ->
-			RSCUComparison RSCUComp = new RSCUComparison(currentRSCU, otherRSCU)
+			RSCUComparator RSCUComp = new RSCUComparator(currentRSCU, otherRSCU)
 			System.out.println("RSCUComp.getSlope():  " + RSCUComp.getSlope())
 			(Math.abs(RSCUComp.getSlope()
 				.subtract(new BigDecimal(1), MathContext.UNLIMITED)) <= new BigDecimal(".1"))
@@ -84,6 +84,16 @@ class ProcessorComparatorTests {
 		assert !organismOne.isSimilarTo(organismTwo, RSCUComparatorClosure)
 	}
 
+	@Test
+	void TestRSCUAnalyzerWithoutSimilarityChecking() {
+		def orgUpload = Organism.get(71)
+		def orgsGenBank = [Organism.get(81), Organism.get(82), Organism.get(83), Organism.get(84), Organism.get(85)]
+		def resultsFile = (new RSCUAnalyzerWithoutSimilarityChecking(orgUpload, orgsGenBank)).analyze()
+
+		// (JGM) Also, manually check the contents of this file!
+		assert (new File("Organismus Numberus 71_RSCU.txt")).exists()
+	}
+	
     @Ignore
 	@Test
 	void TestRSCUAnalyzer() {
@@ -91,7 +101,7 @@ class ProcessorComparatorTests {
 		def organismTwo = Organism.get(78)
 		def orgsList = [organismTwo]
 		def RSCUComparatorClosure = { Organism currentRSCU, Organism otherRSCU ->
-			delegate.RSCUComp = new RSCUComparison(organismOne, organismTwo)
+			delegate.RSCUComp = new RSCUComparator(organismOne, organismTwo)
 			(Math.abs(RSCUComp.getSlope()
 					.subtract(new BigDecimal(1), MathContext.UNLIMITED)) > new BigDecimal(".1"))
 		}

@@ -18,6 +18,8 @@ stacktrace.log
 nodes.dmp
 names.dmp
 /Db/
+biosql-schema
+grails-schema
 
 #generated intellij project files
 *.iml
