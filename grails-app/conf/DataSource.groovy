@@ -1,8 +1,3 @@
-import edu.pdx.cs.data.GenBankClient
-import edu.pdx.cs.data.OrganismProcessor
-import org.biojavax.bio.seq.RichSequence
-import org.biojavax.bio.seq.RichSequenceIterator
-
 dataSource {
     pooled = true
     driverClassName = "org.h2.Driver"
@@ -50,25 +45,6 @@ environments {
                testWhileIdle=true
                testOnReturn=true
                validationQuery="SELECT 1"
-            }
-        }
-        // get some real data for demo
-        GenBankClient client = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
-        List<String> remoteFiles = client.getAllFilesInDirectory("genbank"){
-            it.isFile() && it.name.endsWith("seq.gz")}[0..4]
-        OrganismProcessor processor = new OrganismProcessor()
-
-        RichSequence sequence
-        BufferedReader reader
-        RichSequenceIterator sequences
-
-        for (remoteFile in remoteFiles) {
-            reader = client.readRemoteFile(remoteFile)
-            sequences = RichSequence.IOTools.readGenbankDNA(reader, null)
-
-            while (sequences.hasNext()) {
-                sequence = sequences.nextRichSequence()
-                processor.process(sequence)
             }
         }
     }
