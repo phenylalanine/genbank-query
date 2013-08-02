@@ -31,6 +31,7 @@ class MainController {
     userOrganism: string
     userSequenceFile: File
      */
+
     def upload() {
         def organismName0 = params.get("userOrganism0")
         def MultipartFile userSeqFile0 = request.getFile("userSequenceFile0")
@@ -53,24 +54,23 @@ class MainController {
             sequence = DNATools.createDNASequence(sequenceString, organismName0)
             richSequence = RichSequence.Tools.enrich(sequence)
             flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
-        }
-        if (organismName1 && userSeqFile1) {
+        } else if (organismName1 && userSeqFile1) {
             sequenceString = IOUtils.toString(userSeqFile1.inputStream, "UTF-8").trim()
             sequence = DNATools.createDNASequence(sequenceString, organismName1)
             richSequence = RichSequence.Tools.enrich(sequence)
             flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
-        }
-        if (genbankOrganismName0) {
+        } else if (genbankOrganismName0) {
             genbankOrganism = Organism.find { scientificName == genbankOrganismName0 }
             if (genbankOrganism) {
                 flash.get("organisms").push(genbankOrganism)
             }
-        }
-        if (genbankOrganismName1) {
+        } else if (genbankOrganismName1) {
             genbankOrganism = Organism.find { scientificName == genbankOrganismName1 }
             if (genbankOrganism) {
                 flash.get("organisms").push(genbankOrganism)
             }
+        } else {
+            response.sendError(400, "Please upload organisms according to the instructions")
         }
 
         // TODO: add data from user selected domain class entry to RSCU results
@@ -78,7 +78,9 @@ class MainController {
         // TODO: use results in a view
 
         //response.sendError(200, "Done")     // TODO: Change to response.redirect
-        redirect(action: "index")
+        if (!response.committed) {
+            redirect(action: "index")
+        }
     }
 
     private def aminoDist(organism) {
