@@ -18,10 +18,10 @@ class BootStrap {
         environments {
             test {
                 createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
-				createFakeData()
+                createFakeData()
             }
-			// (JGM) Use this environment to use test data stored on the file system.
-			// E.g.: grails -Dgrails.env=persistentTest test-app -echoOut --stacktrace -integration edu.pdx.cs.data.ProcessorComparatorTests
+            // (JGM) Use this environment to use test data stored on the file system.
+            // E.g.: grails -Dgrails.env=persistentTest test-app -echoOut --stacktrace -integration edu.pdx.cs.data.ProcessorComparatorTests
             persistentTest {
                 File f = new File("Db/Db-is-converted")
                 if (!f.exists()) {
@@ -82,9 +82,6 @@ class BootStrap {
                 }
             }
         }
-
-        File f = new File("Db/Db-is-converted")
-        f.createNewFile()
     }
 
     def createFakeData() {
@@ -165,7 +162,7 @@ class BootStrap {
 
                 richSeq = RichSequence.Tools.createRichSequence("temp", nucleotideSeq, dnaAlphabet)
 
-				// (JGM) Create organisms that have real MCUF, etc., analyses based on the random codon data
+                // (JGM) Create organisms that have real MCUF, etc., analyses based on the random codon data
                 new Organism(
                         organismId: i,
                         scientificName: "Organismus Numberus " + i.toString(),
