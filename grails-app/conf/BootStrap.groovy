@@ -1,10 +1,13 @@
 import edu.pdx.cs.data.GCPercentageProcessor
+import edu.pdx.cs.data.GenBankClient
 import edu.pdx.cs.data.MeanCodonUsageProcessor
+import edu.pdx.cs.data.OrganismProcessor
 import edu.pdx.cs.data.RSCUProcessor
 import groovy.sql.Sql
 import org.biojava.bio.seq.DNATools
 import org.biojava.bio.symbol.Alphabet
 import org.biojavax.bio.seq.RichSequence
+import org.biojavax.bio.seq.RichSequenceIterator
 import org.hsqldb.cmdline.SqlFile
 import webapp.Organism
 
@@ -36,6 +39,26 @@ class BootStrap {
             production {
                 //we dont know what to do here just yet, we definitely don't want to drop
                 //all of the tables on a restart of the application
+
+                // get some real data for demo
+                GenBankClient client = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+                List<String> remoteFiles = client.getAllFilesInDirectory("genbank"){
+                    it.isFile() && it.name.endsWith("seq.gz")}[0..4]
+                OrganismProcessor processor = new OrganismProcessor()
+
+                RichSequence sequence
+                BufferedReader reader
+                RichSequenceIterator sequences
+
+                for (remoteFile in remoteFiles) {
+                    reader = client.readRemoteFile(remoteFile)
+                    sequences = RichSequence.IOTools.readGenbankDNA(reader, null)
+
+                    while (sequences.hasNext()) {
+                        sequence = sequences.nextRichSequence()
+                        processor.process(sequence)
+                    }
+                }
             }
         }
 
