@@ -13,7 +13,9 @@ body {
 }
 
 .row {
-    margin-left: 0;
+    margin: 0;
+    margin-right: 0;
+    width: 940px;
 }
 
 .span10 {
@@ -21,5 +23,40 @@ body {
 }
 
 .dist-graph {
-    display: inline-block
+    display: inline-block;
+}
+
+.piechart {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+}
+
+#gcPie0 {
+    float: left;
+}
+
+#gcPie1 {
+    float: right;
+}
+
+#gcText {
+    position: relative;
+    display: inline-block;
+    width: 536px;
+    height: 200px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#gcText div#gcPerc0 {
+    margin-top: 40px;
+    left: 0;
+}
+
+#gcText div#gcPerc1 {
+    position: absolute;
+    bottom: 40px;
+    right: 0;
+    margin: 0;
 }
