@@ -11,14 +11,14 @@ package edu.pdx.cs.data
 
 import java.math.MathContext
 import org.apache.commons.logging.LogFactory
-import org.biojavax.bio.seq.RichSequence
 import webapp.Organism
 
 class RSCUComparator {
 	private static final log = LogFactory.getLog(this)
 	private int bigDecimalScale
 	private Organism orgMaster, orgCompared
-	private String trendlineSlope, trendlineYIntercept
+	RSCUComparison rscuComp
+	BigDecimal trendlineSlope, trendlineYIntercept
 	
 	public RSCUComparator(org1, org2) {
 		bigDecimalScale = 10
@@ -33,11 +33,15 @@ class RSCUComparator {
 	}
 
 	public BigDecimal getSlope() {
-		return trendlineSlope.toBigDecimal()
+		return trendlineSlope
 	}
 	
 	public BigDecimal getYIntercept() {
-		return trendlineYIntercept.toBigDecimal()
+		return trendlineYIntercept
+	}
+	
+	public getRSCUComparison() {
+		return rscuComp
 	}
 	
 	// (JGM) x is the Master organism, y is the Compared organism.
@@ -77,7 +81,10 @@ class RSCUComparator {
 		yIntercept = (sumYValues.subtract(slope.multiply(sumYValues, MathContext.UNLIMITED), MathContext.UNLIMITED))
 			.divide(distSize, bigDecimalScale, BigDecimal.ROUND_HALF_UP)
 		
-		trendlineSlope = slope.toString()
-		trendlineYIntercept = yIntercept.toString()
+		trendlineSlope = slope
+		trendlineYIntercept = yIntercept
+		rscuComp = new RSCUComparison(orgMaster.organismId, orgMaster.scientificName, orgMaster.taxonomyId,
+			orgMaster.rscuCodonDistribution, orgCompared.organismId, orgCompared.scientificName, orgCompared.taxonomyId,
+			orgCompared.rscuCodonDistribution, trendlineSlope, trendlineYIntercept)
 	}
 }

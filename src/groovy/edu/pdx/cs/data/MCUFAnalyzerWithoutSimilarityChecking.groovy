@@ -1,9 +1,8 @@
 /**
  * Created with Eclipse!
  * User: Jim Miller (JGM)
- * Date: 7/21/13
- * 
- * 
+ * Date: 8/3/13
+ *
  */
 
 package edu.pdx.cs.data
@@ -14,13 +13,13 @@ import org.apache.commons.logging.LogFactory
 
 import webapp.Organism
 
-class RSCUAnalyzerWithoutSimilarityChecking {
+class MCUFAnalyzerWithoutSimilarityChecking {
 	private static final log = LogFactory.getLog(this)
 	Organism orgMaster
 	List<Organism> orgsCompared
-	List<RSCUComparison> comparisonResults
+	List<MCUFComparison> comparisonResults
 	
-	public RSCUAnalyzerWithoutSimilarityChecking(org1, moreOrgs) {
+	public MCUFAnalyzerWithoutSimilarityChecking(org1, moreOrgs) {
 		orgMaster = org1
 		orgsCompared = moreOrgs
 		comparisonResults = []
@@ -28,32 +27,32 @@ class RSCUAnalyzerWithoutSimilarityChecking {
 	}
 	
 	public analyze() {
-		RSCUComparator rscuCompor
+		MCUFComparator MCUFCompor
 		
 		for (org in orgsCompared) {
-			rscuCompor = new RSCUComparator(orgMaster, org)
-			comparisonResults += rscuCompor.getRSCUComparison()
+			MCUFCompor = new MCUFComparator(orgMaster, org)
+			comparisonResults += MCUFCompor.getMCUFComparison()
 		}
-		// (JGM) Sort result list by RSCU trendline slope (closest to 1 being the best)
-		comparisonResults = comparisonResults.sort{ a, b -> Math.abs(1 - a.trendlineSlope) <=> Math.abs(1 - b.trendlineSlope) }
+        // sort result list by mcuf (lowest to highest).
+		comparisonResults = comparisonResults.sort{a,b -> a.mcuf <=> b.mcuf}
 
 	}
 	
 	// (JGM) Return a list of comparison results, one for each Organism in the "compared" set.
-	public List<RSCUComparison> getComparisonResults() {
+	public List<MCUFComparison> getComparisonResults() {
 		return comparisonResults
 	}
 
 	// (JGM) Print to a text file and return the file
-	public File rscuFileBuilder() {
-		String fileName = orgMaster.scientificName + "_RSCUAnalysis.txt"
+	public File mcufFileBuilder() {
+		String fileName = orgMaster.scientificName + "_MCUFAnalysis.txt"
 		def textFile = new File(fileName)
 
 		textFile.withWriter { out ->
-			out.writeLine("Organism ID, Scientific Name, Taxonomy ID, RSCU Trendline Slope, RSCU Trendline Y-Intercept")
+			out.writeLine("Organism ID, Scientific Name, Taxonomy ID, MCUF")
 			for (item in comparisonResults) {
 				out.writeLine(item.org2OrganismId + ", " + item.org2ScientificName + ", " + item.org2TaxonomyId
-					+ ", " + item.trendlineSlope + ", " + item.trendlineYIntercept)
+					+ ", " + item.mcuf)
 			}
 		}
 		return textFile
