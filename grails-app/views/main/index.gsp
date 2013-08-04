@@ -121,5 +121,47 @@
     </div>
 </g:if>
 
+<g:if test="${organisms.size() == 2}">
+    <%-- RSCU Codon Analysis --%>
+    <div class="row">
+        <h2>RSCU Analysis</h2>
+        <%
+            def keys = organisms[0].rscuCodonDistribution.keySet()
+            def rscuHeaders = [
+                    //['string', 'Codon'],
+                    ['number', organisms[0].scientificName],
+                    ['number', organisms[1].scientificName]
+            ]
+            def rscuData = []
+            for (codon in keys) {
+                rscuData.push([ //codon.toUpperCase(),
+                        organisms[0].rscuCodonDistribution[codon],
+                        organisms[1].rscuCodonDistribution[codon] ])
+            }
+            def rscuOptions = [
+                    hAxis: [
+                            title: organisms[0].scientificName,
+                            minValue: 0,
+                            maxValue: 1
+                    ],
+                    vAxis: [
+                            title: organisms[1].scientificName,
+                            minValue: 0,
+                            maxValue: 1
+                    ],
+                    chartArea: [
+                            top: 20, left: 60, width: "75%", height: "75%"
+                    ]
+            ]
+        %>
+        <div id="rscuChart"></div>
+        <gvisualization:scatterCoreChart elementId="rscuChart"
+            columns="${rscuHeaders}" data="${rscuData}"
+            hAxis="${new Expando(rscuOptions.hAxis)}" vAxis="${new Expando(rscuOptions.vAxis)}"
+            legend="${"none"}" chartArea="${new Expando(rscuOptions.chartArea)}"
+            width="${600}" height="${600}"/>
+    </div>
+</g:if>
+
 </body>
 </html>
