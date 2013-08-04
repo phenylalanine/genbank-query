@@ -4,6 +4,7 @@
  * Date: 8/4/13
  *
  * Integration tests for comparators, analyzers, using persistent, randomly-generated data.
+ * All tests meant to be run in persistentTest environment.
  */
 
 package edu.pdx.cs.data
@@ -15,7 +16,7 @@ import webapp.Organism
 import java.math.MathContext
 
 // @Ignore whole class if necessary to not break testing runs, such as on Jenkins.
-// @Ignore
+@Ignore
 class ProcessorComparatorPersistentTests {
 
 	@Test
