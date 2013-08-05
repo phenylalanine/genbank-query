@@ -3,11 +3,13 @@
  * User: Jim Miller (JGM)
  * Date: 7/13/13
  *
- * Integration tests for domain classes' similarTo() comparators using closures.
+ * Integration tests for domain classes' similarTo() comparators using closures, using non-randomly-generated data.
+ * Integration tests for comparators, analyzers, using non-randomly-generated data.
  */
 
 package edu.pdx.cs.data
 
+import org.junit.Ignore
 import org.junit.Test
 import webapp.Organism
 

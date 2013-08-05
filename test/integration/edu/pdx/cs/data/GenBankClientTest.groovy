@@ -220,4 +220,44 @@ class GenBankClientTest {
             it.sequenceFiles.each { it.endsWith(".fna") }
         }
     }
+
+    @Ignore
+    @Test
+    void testResyncNodeFiles(){
+
+        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+
+        File nodes = new File("nodes.dmp");
+        File names = new File("names.dmp");
+
+        if (nodes.exists()) nodes.delete()
+        if (names.exists()) names.delete()
+
+        genbankClient.resyncNodeFiles()
+
+        assert nodes.exists()
+        assert names.exists()
+        assert nodes.size() > 0
+        assert names.size() > 0
+
+    }
+
+    @Ignore
+    @Test
+    void testGetTaxonomyInfo() {
+
+        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+
+        File nodes = new File("nodes.dmp");
+        File names = new File("names.dmp");
+
+        if (!nodes.exists()|| !names.exists()) genbankClient.resyncNodeFiles()
+
+        NCBITaxon taxon = genbankClient.getTaxonomyInfo(224284)
+        assert taxon.NCBITaxID == 224284
+        assert taxon.displayName.toLowerCase().equals("clethra castaneifolia")
+        assert taxon.parentNCBITaxID == 13434
+
+    }
+
 }

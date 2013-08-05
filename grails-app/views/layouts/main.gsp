@@ -1,9 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
-  User: monleezy
+  User: Joseph Lee <josel@pdx.edu>
   Date: 7/17/13
   Time: 1:00 AM
-  To change this template use File | Settings | File Templates.
 --%>
 
 <!DOCTYPE html>
@@ -37,35 +36,19 @@
 <%--
     Upload Modal
 --%>
-<div id="upload" class="modal fade hide">
+<div id="upload" class="modal fade">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Upload Sequence</h3>
+        <h3>Add Sequences to Analyze</h3>
     </div>
     <div class="modal-body">
-        <g:uploadForm action="upload" class="form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="userSequenceFile">
-                    Sequence File
-                </label>
-                <div class="controls">
-                    <input type="File" id="userSequenceFile" name="userSequenceFile" required
-                           style="background-color: rgba(0, 0, 0, 0); border: 0;"/>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="userOrganism">
-                    Organism Name
-                </label>
-                <div class="controls">
-                    <input type="text" name="userOrganism" id="userOrganism"
-                           placeholder="Enter scientific name" required/>
-                </div>
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <input type="submit" />
-                </div>
+        <g:uploadForm action="upload" class="form-horizontal" name="upload-form">
+            <div id="upload-form-list"></div>
+
+            <div class="add-upload" style="text-align: center">
+                <input type="button" id="upload" class="btn add-seq" value="Add Custom Sequence"/>
+                <input type="button" id="genbank" class="btn add-seq" value="Add GenBank Sequence"/>
+                <input type="submit" class="btn btn-submit" disabled/>
             </div>
         </g:uploadForm>
     </div>
@@ -78,7 +61,7 @@
     --%>
     <div class="masthead">
         <ul class="nav nav-pills pull-right">
-            <li><a href="#" id="upload-nav">Upload Sequence</a></li>
+            <li><a href="#" id="upload-nav">Analyze Sequences</a></li>
             <li>
                 <form class="navbar-search">
                     <input type="text" class="search-query" placeholder="Search Organisms" autocomplete="off">

@@ -3,12 +3,16 @@ package edu.pdx.cs.data
 import org.apache.commons.logging.LogFactory
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
-import org.apache.commons.net.ftp.FTPFile
+import org.apache.tools.tar.TarEntry
+import org.apache.tools.tar.TarInputStream
 import org.biojavax.SimpleNamespace
 import org.biojavax.bio.seq.RichSequence
 import org.biojavax.bio.seq.RichSequenceIterator
 import org.biojavax.bio.taxa.NCBITaxon
 import org.biojavax.bio.taxa.SimpleNCBITaxon
+import org.biojavax.bio.taxa.io.NCBITaxonomyLoader
+import org.biojavax.bio.taxa.io.SimpleNCBITaxonomyLoader
+
 import java.util.zip.GZIPInputStream
 
 /**
@@ -42,7 +46,9 @@ class GenBankClient {
     static NCBITaxon getTaxonomyForId(int id) {
         try {
             def xml = new XmlSlurper()
-                    .parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=${id}&retmode=xml")
+                    .parse(
+                    "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=${id}&retmode=xml"
+            )
 
             NCBITaxon ncbiTaxon = new SimpleNCBITaxon(id)
 
@@ -59,8 +65,65 @@ class GenBankClient {
             return ncbiTaxon
         } catch (Exception e) {
             log.warn("Error retrieving taxonomy information for id: " + id, e)
+            return null
         }
     }
+
+    public void resyncNodeFiles(){
+
+        // Download taxdmp archive from ftp://ftp.ncbi.nih.gov/pub/taxonomy/
+        def ftp1 = getFtpClient(GENBANK_FTP_URL)
+        def InputStream is = ftp1.retrieveFileStream("/pub/taxonomy/taxdump.tar.gz")
+        def TarInputStream tis = new TarInputStream(new GZIPInputStream (new BufferedInputStream(is)))
+        TarEntry entry;
+
+        // Extract and save nodes.dmp and names.dmp
+        while ((entry = tis.getNextEntry()) != null) {
+
+            if ((entry.getName().equals("nodes.dmp")) || (entry.getName().equals("names.dmp"))) {
+
+                try {
+                    def fout = new FileOutputStream(new File(entry.getName()))
+                    def bos = new BufferedOutputStream(fout)
+                    tis.copyEntryContents(bos)
+                    fout.close()
+                    bos.close()
+                } catch (Exception e) {
+                    log.warn("Error in Genbank client saving file to disc: " + entry.getName(), e)
+                }
+            }
+        }
+        tis.close()
+        is.close()
+        ftp1.disconnect()
+
+    }
+
+    public NCBITaxon getTaxonomyInfo(int id){
+
+        BufferedReader nodes = new BufferedReader(new FileReader("nodes.dmp"))
+        BufferedReader names = new BufferedReader(new FileReader("names.dmp"))
+
+        // Use the BioJava SimpleNCBITaxonomyLoader to read the required files.
+        NCBITaxonomyLoader l = new SimpleNCBITaxonomyLoader()
+        NCBITaxon t
+
+        t = l.readNode(nodes)
+        t = l.readName(names)
+
+        // TODO: test on large numbers, see if there is heap memory problem
+        while(t != null){
+
+            if (t.NCBITaxID == id)  break;
+
+            t = l.readNode(nodes)
+            t = l.readName(names)
+
+        }
+
+        return t
+    }
+
 
     /**
      * This will go out and get all of the sequences in the genbank directory
@@ -74,8 +137,7 @@ class GenBankClient {
 
         genBankFiles.each { genBankFile ->
             try {
-                def is = new GZIPInputStream(ftp.retrieveFileStream(genBankFile))
-                def reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(is)))
+                def reader = readRemoteFile(genBankFile)
                 RichSequenceIterator sequences = RichSequence.IOTools.readGenbankDNA(reader, new SimpleNamespace("base-genbank"))
                 OrganismProcessor processor = new OrganismProcessor(persist: persist)
 

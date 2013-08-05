@@ -19,11 +19,14 @@ class MainControllerTests {
     void testValidUpload() {
         // setup file
         //controller.metaClass.request = new MockMultipartHttpServletRequest()
-        def uploadFile = new GrailsMockMultipartFile("userSequenceFile", "GTCA" as byte[])
-        request.setParameter("userOrganism", "Drosophila melanogaster")
-        request.addFile(uploadFile)
+        def uploadFile0 = new GrailsMockMultipartFile("userSequenceFile0", "GTCA" as byte[])
+        def uploadFile1 = new GrailsMockMultipartFile("userSequenceFile1", "GTCA" as byte[])
+        request.setParameter("userOrganism0", "Drosophila melanogaster")
+        request.setParameter("userOrganism1", "Drosophila meganocator")
+        request.addFile(uploadFile0)
+        request.addFile(uploadFile1)
         controller.upload()
-        assert response.status == 200
+        assert response.status == 302
     }
 
     /**
@@ -40,7 +43,7 @@ class MainControllerTests {
      * userSeqFile
      */
     void testMissingFile() {
-        request.setParameter("userOrganism", "Drosophila melanogaster")
+        request.setParameter("userOrganism0", "Drosophila melanogaster")
         controller.upload()
         assert response.status == 400
     }
@@ -51,7 +54,7 @@ class MainControllerTests {
      */
     void testMissingName() {
         controller.metaClass.request = new MockMultipartHttpServletRequest()
-        def uploadFile = new GrailsMockMultipartFile("userSequenceFile", "GTCA" as byte[])
+        def uploadFile = new GrailsMockMultipartFile("userSequenceFile0", "GTCA" as byte[])
         controller.request.addFile(uploadFile)
         controller.upload()
         assert response.status == 400

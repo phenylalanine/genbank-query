@@ -19,3 +19,7 @@ body {
 .span10 {
     margin-left: 0;
 }
+
+.dist-graph {
+    display: inline-block
+}
