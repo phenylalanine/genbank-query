@@ -19,6 +19,7 @@ import java.math.MathContext
 @Ignore
 class ProcessorComparatorPersistentTests {
 
+
 	@Test
 	void TestBasicRSCUComparator() {
 		System.out.println("Organism.count():  " + Organism.count())
@@ -27,7 +28,8 @@ class ProcessorComparatorPersistentTests {
 		RSCUComparator rscuCompor = new RSCUComparator(organismOne, organismTwo)
 		System.out.println("rscuCompor - trendlineSlope:  " + rscuCompor.rscuComp.trendlineSlope)
 	}
-	
+
+    @Ignore
 	@Test
 	// (JGM) Results depend on randomly-generated data from BootStrap.groovy, and so will not be consistent
 	// across installations of genbank-query.  Test meant to be run in persistentTest environment.
@@ -43,7 +45,8 @@ class ProcessorComparatorPersistentTests {
 
 		assert !organismOne.isSimilarTo(organismTwo, rscuComparatorClosure)
 	}
-	
+
+    @Ignore
 	@Test
 	// (JGM) Results depend on randomly-generated data from BootStrap.groovy, and so will not be consistent
 	// across installations of genbank-query.  Test meant to be run in persistentTest environment.
@@ -59,7 +62,8 @@ class ProcessorComparatorPersistentTests {
 
 		assert !organismOne.isSimilarTo(organismTwo, mcufComparatorClosure)
 	}
-	
+
+    @Ignore
 	@Test
 	// (JGM) Results depend on randomly-generated data from BootStrap.groovy, and so will not be consistent
 	// across installations of genbank-query.  Test meant to be run in persistentTest environment.
@@ -75,7 +79,8 @@ class ProcessorComparatorPersistentTests {
 
 		assert !organismOne.isSimilarTo(organismTwo, gcPercentageComparatorClosure)
 	}
-	
+
+    @Ignore
 	@Test
 	// (JGM) Results depend on randomly-generated data from BootStrap.groovy, and so will not be consistent
 	// across installations of genbank-query.  Test meant to be run in persistentTest environment.
@@ -106,6 +111,7 @@ class ProcessorComparatorPersistentTests {
 		assert !organismOne.isSimilarTo(organismTwo, gcPercentageComparatorClosure)
 	}
 
+    @Ignore
 	@Test
 	// (JGM) Results depend on randomly-generated data from BootStrap.groovy, and so will not be consistent
 	// across installations of genbank-query.  Test meant to be run in persistentTest environment.
@@ -121,7 +127,8 @@ class ProcessorComparatorPersistentTests {
 		// (JGM) The first organismID in the first line should be "81", in this example RSCU analysis.
 		assert results.get(0).org2OrganismId == "81"
 	}
-	
+
+    @Ignore
 	@Test
 	// (JGM) Results depend on randomly-generated data from BootStrap.groovy, and so will not be consistent
 	// across installations of genbank-query.  Test meant to be run in persistentTest environment.
@@ -137,7 +144,8 @@ class ProcessorComparatorPersistentTests {
 		// (JGM) The first organismID in the first line should be "81", in this example MCUF analysis.
 		assert results.get(0).org2OrganismId == "81"
 	}
-	
+
+    @Ignore
 	@Test
 	// (JGM) Results depend on randomly-generated data from BootStrap.groovy, and so will not be consistent
 	// across installations of genbank-query.  Test meant to be run in persistentTest environment.
@@ -153,7 +161,8 @@ class ProcessorComparatorPersistentTests {
 		// (JGM) The first organismID in the first line should be "82", in this example GC Percentage analysis.
 		assert results.get(0).org2OrganismId == "82"
 	}
-	
+
+    @Ignore
 	@Test
 	// (JGM) Results depend on randomly-generated data from BootStrap.groovy, and so will not be consistent
 	// across installations of genbank-query.  Test meant to be run in persistentTest environment.
