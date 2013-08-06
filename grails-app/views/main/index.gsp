@@ -10,6 +10,8 @@
   <title>GenBank-Query</title>
     <meta name="layout" content="main"/>
 
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}" type="text/css">
+
     <gvisualization:apiImport />
 
 </head>
@@ -47,7 +49,7 @@
 
         %>
         <g:each in="${rowCounts}" var="r">
-            <div class="row span12">
+            <div class="row">
                 <% c = 0 %>
                 <g:while test="${c < r}">
                     <%
@@ -70,6 +72,96 @@
     </div>
 </g:elseif>
 
+<g:if test="${organisms.size() > 0}">
+    <%-- GC Percentage --%>
+    <div id="gc" class="row">
+        <h2>GC Percentages</h2>
+        <div id="gcPie0" class="piechart float-left"></div>
+        <div id="gcText">
+            <%
+                c = 0
+                def percentage, split
+            %>
+            <g:each in="${organisms}" var="organism">
+                <%
+                    percentage = organism.gcPercentage
+                    if (percentage.length() > 5) {
+                        split = percentage.split(/\./)
+                        if (split[1].size() > 2 && new Integer(split[1][2]) >= 5) {
+                            percentage = split[0] + "." + split[1][0] + (new Integer(split[1][1]) + 1).toString()
+                        }
+                        else {
+                            percentage = split[0] + "." + split[1][0..1]
+                        }
+                    }
+                %>
+                <div id="${"gcPerc" + c.toString()}">
+                    ${organism.scientificName}: ${percentage}%
+                </div>
+                <% c = c + 1 %>
+            </g:each>
+        </div>
+        <div id="gcPie1" class="piechart float-right"></div>
+        <% c = 0 %>
+        <g:each in="${organisms}" var="organism">
+            <%
+                def gcp = new BigDecimal(organism.gcPercentage)
+                def gcData = [['With GC', gcp], ['Without GC', 100 - gcp]]
+                columnHeaders = [['string', 'Codon'], ['number', 'Percentage']]
+                options = [
+                        legend: [position: 'none']
+                ]
+            %>
+            <gvisualization:pieCoreChart elementId="${"gcPie" + c.toString()}"
+                columns="${columnHeaders}" data="${gcData}"
+                pieSliceText="${"none"}"
+                width="${200}" height="${200}" legend="${"none"}"/>
+            <% c = c + 1 %>
+        </g:each>
+    </div>
+</g:if>
+
+<g:if test="${organisms.size() == 2}">
+    <%-- RSCU Codon Analysis --%>
+    <div class="row">
+        <h2>RSCU Analysis</h2>
+        <%
+            def keys = organisms[0].rscuCodonDistribution.keySet()
+            def rscuHeaders = [
+                    //['string', 'Codon'],
+                    ['number', organisms[0].scientificName],
+                    ['number', organisms[1].scientificName]
+            ]
+            def rscuData = []
+            for (codon in keys) {
+                rscuData.push([ //codon.toUpperCase(),
+                        organisms[0].rscuCodonDistribution[codon],
+                        organisms[1].rscuCodonDistribution[codon] ])
+            }
+            def rscuOptions = [
+                    hAxis: [
+                            title: organisms[0].scientificName,
+                            minValue: 0,
+                            maxValue: 1
+                    ],
+                    vAxis: [
+                            title: organisms[1].scientificName,
+                            minValue: 0,
+                            maxValue: 1
+                    ],
+                    chartArea: [
+                            top: 20, left: 60, width: "75%", height: "75%"
+                    ]
+            ]
+        %>
+        <div id="rscuChart"></div>
+        <gvisualization:scatterCoreChart elementId="rscuChart"
+            columns="${rscuHeaders}" data="${rscuData}"
+            hAxis="${new Expando(rscuOptions.hAxis)}" vAxis="${new Expando(rscuOptions.vAxis)}"
+            legend="${"none"}" chartArea="${new Expando(rscuOptions.chartArea)}"
+            width="${600}" height="${600}"/>
+    </div>
+</g:if>
 
 </body>
 </html>
