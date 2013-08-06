@@ -54,8 +54,9 @@ function uploadButtonClick() {
     // Upload menu settings
     $('input[type=button].add-seq#upload').on('click', function(event) {
         var i = $('.upload-form-elem').length;
-        var newSeqElem = $('<div class="upload-form-elem">' +
+        var newSeqElem = $('<div class="upload-form-elem" id = "upload-form-elem' + i + '">' +
             '<div class="control-group">' +
+            '<button class="close" id="close' + i + '">×</button>' +
             '<label class="control-label" for="userSequenceFile' + i + '">Sequence File</label>' +
         '<div class="controls"><input type="File" id="userSequenceFile' + i +
             '" name="userSequenceFile' + i +
@@ -69,14 +70,19 @@ function uploadButtonClick() {
         '</div><hr>' +
         '</div>').hide();
         $('#upload-form-list').append(newSeqElem);
+        $('#close'+i).click(function(){
+            $('#upload-form-elem'+i).remove();
+            uploadButtonClick();
+        });
         newSeqElem.fadeIn();
         uploadButtonClick();
     });
     // Upload menu settings
     $('input[type=button].add-seq#genbank').on('click', function(event) {
         var i = $('.upload-form-elem').length;
-        var newSeqElem = $('<div class="upload-form-elem">' +
+        var newSeqElem = $('<div class="upload-form-elem" id = "upload-form-elem' + i + '">' +
             '<div class="control-group">' +
+            '<button class="close" id="close' + i + '">×</button>' +
             '<label class="control-label" for="genbankOrganism' + i + '">Scientific Name</label>' +
             '<div class="controls"><input type="text" name="genbankOrganism' + i +
             '" class="search-query" id="genbankOrganism' + i +
@@ -84,6 +90,10 @@ function uploadButtonClick() {
             '</div><hr>' +
             '</div>').hide();
         $('#upload-form-list').append(newSeqElem);
+        $('#close'+i).click(function(){
+            $('#upload-form-elem'+i).remove();
+            uploadButtonClick();
+        });
         newSeqElem.fadeIn();
         uploadButtonClick();
         $('#upload-form .search-query').typeahead($.extend(typeaheadOptions, { items: 24 }));
