@@ -55,22 +55,27 @@ class MainController {
             sequence = DNATools.createDNASequence(sequenceString, organismName0)
             richSequence = RichSequence.Tools.enrich(sequence)
             flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
-        } else if (organismName1 && userSeqFile1) {
+        }
+        if (organismName1 && userSeqFile1) {
             sequenceString = IOUtils.toString(userSeqFile1.inputStream, "UTF-8").trim()
             sequence = DNATools.createDNASequence(sequenceString, organismName1)
             richSequence = RichSequence.Tools.enrich(sequence)
             flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
-        } else if (genbankOrganismName0) {
+        }
+        if (genbankOrganismName0) {
             genbankOrganism = Organism.find { scientificName == genbankOrganismName0 }
             if (genbankOrganism) {
                 flash.get("organisms").push(genbankOrganism)
             }
-        } else if (genbankOrganismName1) {
+        }
+        if (genbankOrganismName1) {
             genbankOrganism = Organism.find { scientificName == genbankOrganismName1 }
             if (genbankOrganism) {
                 flash.get("organisms").push(genbankOrganism)
             }
-        } else {
+        }
+
+        if (flash.get("organisms").size() > 2 || flash.get("organisms").size() < 1){
             response.sendError(400, "Please upload organisms according to the instructions")
         }
 
