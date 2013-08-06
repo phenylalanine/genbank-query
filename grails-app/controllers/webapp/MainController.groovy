@@ -20,7 +20,8 @@ class MainController {
 
         dataMap = [
                 organisms: organisms,
-                codonDistributions: organisms.collect { aminoDist(it) }
+                codonDistributions: organisms.collect { aminoDist(it) },
+                //gcPercentages: organisms.collect { it. }
         ]
 
         render(view: "index", model: dataMap)
@@ -77,7 +78,6 @@ class MainController {
         // TODO: turn the codon distrobution into MCUF by comparing with stuff in domain class
         // TODO: use results in a view
 
-        //response.sendError(200, "Done")     // TODO: Change to response.redirect
         if (!response.committed) {
             redirect(action: "index")
         }
