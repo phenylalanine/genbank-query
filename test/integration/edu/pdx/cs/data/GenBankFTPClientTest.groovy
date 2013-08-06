@@ -1,6 +1,5 @@
 package edu.pdx.cs.data
 
-import org.biojavax.bio.taxa.NCBITaxon
 import org.junit.Ignore
 import org.junit.Test
 
@@ -11,34 +10,11 @@ import org.junit.Test
  * Time: 5:31 PM
  * To change this template use File | Settings | File Templates.
  */
-class GenBankClientTest {
-
-    @Test
-    void testClientRetrievesReleaseVersion() {
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
-        assert genbankClient.currentGenBankReleaseVersion != null
-    }
-
-    @Test
-    void testClientRetrievesTaxonomyForTaxonomyId() {
-        NCBITaxon taxon = GenBankClient.getTaxonomyForId(1140)
-
-        assert taxon.containsName("no rank", "cellular organisms")
-        assert taxon.containsName("superkingdom", "Bacteria")
-        assert taxon.containsName("phylum", "Cyanobacteria")
-        assert taxon.containsName("order", "Chroococcales")
-        assert taxon.containsName("genus", "Synechococcus")
-        assert taxon.containsName("species", "Synechococcus elongatus")
-
-        assert taxon.parentNCBITaxID == 32046
-        assert taxon.NCBITaxID == 1140
-        assert taxon.geneticCode == 11
-        assert taxon.mitoGeneticCode == 0
-    }
+class GenBankFTPClientTest {
 
     @Test
     void testGetAllFilesInDirectory() {
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+        def genbankClient = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
 
         //check that we list the right # of dirs with no filter
         def fileList = genbankClient.getAllFilesInDirectory("genbank")
@@ -55,7 +31,7 @@ class GenBankClientTest {
 
     @Test
     void testGetAllFilesInDirectoryRecursively() {
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+        def genbankClient = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
 
         //check that we list the right # of dirs with no filter
         def fileList = genbankClient
@@ -74,7 +50,7 @@ class GenBankClientTest {
     @Test
     void testCreateGenomeAssemblyObjectsProcessGenomeFilesEuk() {
 
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+        def genbankClient = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
 
         def fileList = [
                 'genbank/genomes/Eukaryotes/invertebrates/Acromyrmex_echinatior/Aech_3.9/ASSEMBLY_INFO',
@@ -137,7 +113,7 @@ class GenBankClientTest {
     @Test
     void testCreateGenomeAssemblyObjectsProcessGenomeFilesBac() {
 
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+        def genbankClient = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
         def fileList = [
                 'genbank/genomes/Bacteria/Acetobacter_pasteurianus_IFO_3283_22_uid31135/AP011142.rpt',
                 'genbank/genomes/Bacteria/Acetobacter_pasteurianus_IFO_3283_22_uid31135/AP011143.rpt',
@@ -187,7 +163,7 @@ class GenBankClientTest {
     @Test
     void testGetEukaryaGemoneFiles() {
 
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+        def genbankClient = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
         def subgroup = "invertebrates"
         def fileList = genbankClient.getEukaryaGenomeFiles(subgroup)
         assert !fileList.empty
@@ -205,7 +181,7 @@ class GenBankClientTest {
     @Test
     void testGetBacteriaGemoneFiles() {
 
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+        def genbankClient = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
         def fileList = genbankClient.getAllBacteriaGenomeFiles()
         assert !fileList.empty
 
@@ -220,44 +196,5 @@ class GenBankClientTest {
             it.sequenceFiles.each { it.endsWith(".fna") }
         }
     }
-
-    @Ignore
-    @Test
-    void testResyncNodeFiles(){
-
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
-
-        File nodes = new File("nodes.dmp");
-        File names = new File("names.dmp");
-
-        if (nodes.exists()) nodes.delete()
-        if (names.exists()) names.delete()
-
-        genbankClient.resyncNodeFiles()
-
-        assert nodes.exists()
-        assert names.exists()
-        assert nodes.size() > 0
-        assert names.size() > 0
-
-    }
-
-    @Ignore
-    @Test
-    void testGetTaxonomyInfo() {
-
-        def genbankClient = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
-
-        File nodes = new File("nodes.dmp");
-        File names = new File("names.dmp");
-
-        if (!nodes.exists()|| !names.exists()) genbankClient.resyncNodeFiles()
-
-        NCBITaxon taxon = genbankClient.getTaxonomyInfo(224284)
-        assert taxon.NCBITaxID == 224284
-        assert taxon.displayName.toLowerCase().equals("clethra castaneifolia")
-        assert taxon.parentNCBITaxID == 13434
-
-    }
-
 }
+

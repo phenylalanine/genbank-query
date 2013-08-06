@@ -73,7 +73,7 @@ environments {
 log4j = {
 
     appenders {
-        file name: 'file', file: 'logs/gbserver.log', append: true
+        file name: 'file', file: 'logs/gbserver.log', append: false
         console name: 'stdout'
     }
     root {

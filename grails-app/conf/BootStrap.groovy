@@ -1,5 +1,5 @@
 import edu.pdx.cs.data.GCPercentageProcessor
-import edu.pdx.cs.data.GenBankClient
+import edu.pdx.cs.data.GenBankFTPClient
 import edu.pdx.cs.data.MeanCodonUsageProcessor
 import edu.pdx.cs.data.OrganismProcessor
 import edu.pdx.cs.data.RSCUProcessor
@@ -41,7 +41,7 @@ class BootStrap {
                 //all of the tables on a restart of the application
 
                 // get some real data for demo
-                GenBankClient client = new GenBankClient(GenBankClient.GENBANK_FTP_URL)
+                GenBankFTPClient client = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
                 List<String> remoteFiles = client.getAllFilesInDirectory("genbank"){
                     it.isFile() && it.name.endsWith("seq.gz")}[0..4]
                 OrganismProcessor processor = new OrganismProcessor()
