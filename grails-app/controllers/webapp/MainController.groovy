@@ -20,9 +20,12 @@ class MainController {
 
         dataMap = [
                 organisms: organisms,
-                codonDistributions: organisms.collect { aminoDist(it) },
-                //gcPercentages: organisms.collect { it. }
+                codonDistributions: organisms.collect { aminoDist(it) }
         ]
+
+        if (organisms.size() == 2) {
+            dataMap.put("fitParams", bestFitParams(organisms))
+        }
 
         render(view: "index", model: dataMap)
     }
@@ -32,7 +35,6 @@ class MainController {
     userOrganism: string
     userSequenceFile: File
      */
-
     def upload() {
         def organismName0 = params.get("userOrganism0")
         def MultipartFile userSeqFile0 = request.getFile("userSequenceFile0")
@@ -123,5 +125,38 @@ class MainController {
             ])
         }
         return dataTables
+    }
+
+    /*
+    Perform least-squares estimation of paramters for the RSCU Distribution between two organisms
+    Returns an ArrayList containing [Y-intercept, Slope]
+     */
+    def bestFitParams(organisms) {
+        def keys = organisms[0].rscuCodonDistribution.keySet()
+        def org1 = [], org2 = []
+        BigDecimal sum1 = 0, sum2 = 0, mean1, mean2, b0, b1
+        for (codon in keys) {
+            def xval = new BigDecimal(organisms[0].rscuCodonDistribution[codon])
+            def yval = new BigDecimal(organisms[1].rscuCodonDistribution[codon])
+            org1.push(xval)
+            org2.push(yval)
+            sum1 += xval
+            sum2 += yval
+        }
+        mean1 = sum1 / keys.size()
+        mean2 = sum2 / keys.size()
+
+        BigDecimal sxx = 0, sxy = 0
+        for (x in org1) {
+            sxx += (x - mean1) * (x - mean1)
+        }
+        for (int i = 0; i < org1.size(); i++) {
+            sxy += org2[i] * (org1[i] - mean1)
+        }
+
+        b1 = sxy / sxx
+        b0 = mean2 - b1 * mean1
+
+        return [b0, b1]
     }
 }
