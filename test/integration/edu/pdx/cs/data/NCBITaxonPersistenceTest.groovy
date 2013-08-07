@@ -3,6 +3,8 @@ package edu.pdx.cs.data
 import org.biojavax.bio.taxa.NCBITaxon
 import org.biojavax.bio.taxa.SimpleNCBITaxon
 import org.junit.Test
+import webapp.GenBankDynamicService
+import webapp.GenBankSyncService
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
@@ -19,7 +21,8 @@ class NCBITaxonPersistenceTest {
     @Test
     void testNCBITaxonCRUD() {
         //Create
-        NCBITaxon taxon = GenBankClient.getTaxonomyForId(1140)
+        GenBankDynamicService genbank = new GenBankDynamicService()
+        NCBITaxon taxon = genbank.getTaxonomyForId(1140)
         taxon.save(flush: true)
 
         //Read
