@@ -149,7 +149,10 @@
                     color: '#058DC7'
                 },
                 {
-                    data: [[0, ${fitParams[0]}], [1, ${fitParams[0] + fitParams[1]}]],
+                    data: [
+                        [0, ${rscuComp.trendlineYIntercept}],
+                        [1, ${rscuComp.trendlineSlope + rscuComp.trendlineYIntercept}]
+                    ],
                     lines: { show: true },
                     fill: true,
                     color: '#cc2222'
@@ -164,7 +167,6 @@
         <flot:plot id="container-flot" style="width: 500px; height: 500px;"
             data="rscuFlotData" options="rscuFlotOptions"/>
         <%-- TODO: Add axis labels with organism names --%>
-
     </div>
 </g:if>
 

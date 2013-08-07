@@ -1,6 +1,7 @@
 package webapp
 
 import edu.pdx.cs.data.OrganismProcessor
+import edu.pdx.cs.data.RSCUComparator
 import org.apache.commons.io.IOUtils
 import org.biojava.bio.seq.DNATools
 import org.biojavax.bio.seq.RichSequence
@@ -17,14 +18,12 @@ class MainController {
         if (flash.keySet().size() > 0) {
             organisms = flash.get("organisms")
         }
-
         dataMap = [
                 organisms: organisms,
                 codonDistributions: organisms.collect { aminoDist(it) }
         ]
-
         if (organisms.size() == 2) {
-            dataMap.put("fitParams", bestFitParams(organisms))
+            dataMap.put("rscuComp", new RSCUComparator(organisms[0], organisms[1]))
         }
 
         render(view: "index", model: dataMap)
