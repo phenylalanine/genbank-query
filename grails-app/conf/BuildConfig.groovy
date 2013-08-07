@@ -70,5 +70,6 @@ grails.project.dependency.resolution = {
         compile ':cache:1.0.1'
         compile ":pdf:0.6"
         compile ":google-visualization:0.6.2"
+        compile ":flot:0.2.3"
     }
 }
