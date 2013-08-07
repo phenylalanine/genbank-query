@@ -12,6 +12,7 @@
 
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}" type="text/css">
 
+    <flot:resources plugins="['pie']" includeJQueryLib="false" includeExCanvasLib="false"/>
     <gvisualization:apiImport />
 
 </head>
@@ -127,39 +128,43 @@
         <h2>RSCU Analysis</h2>
         <%
             def keys = organisms[0].rscuCodonDistribution.keySet()
-            def rscuHeaders = [
-                    //['string', 'Codon'],
-                    ['number', organisms[0].scientificName],
-                    ['number', organisms[1].scientificName]
-            ]
             def rscuData = []
             for (codon in keys) {
-                rscuData.push([ //codon.toUpperCase(),
+                rscuData.push([
                         organisms[0].rscuCodonDistribution[codon],
                         organisms[1].rscuCodonDistribution[codon] ])
             }
-            def rscuOptions = [
-                    hAxis: [
-                            title: organisms[0].scientificName,
-                            minValue: 0,
-                            maxValue: 1
-                    ],
-                    vAxis: [
-                            title: organisms[1].scientificName,
-                            minValue: 0,
-                            maxValue: 1
-                    ],
-                    chartArea: [
-                            top: 20, left: 60, width: "75%", height: "75%"
-                    ]
-            ]
         %>
-        <div id="rscuChart"></div>
-        <gvisualization:scatterCoreChart elementId="rscuChart"
-            columns="${rscuHeaders}" data="${rscuData}"
-            hAxis="${new Expando(rscuOptions.hAxis)}" vAxis="${new Expando(rscuOptions.vAxis)}"
-            legend="${"none"}" chartArea="${new Expando(rscuOptions.chartArea)}"
-            width="${600}" height="${600}"/>
+        <g:javascript>
+            var rscuFlotData = [
+                {
+                    data: ${rscuData},
+                    points: {
+                        radius: 4,
+                        show: true,
+                        fill: true,
+                        fillColor: '#058DC7'
+                    },
+                    lines: { show: false },
+                    color: '#058DC7'
+                },
+                {
+                    data: [[0, ${fitParams[0]}], [1, ${fitParams[0] + fitParams[1]}]],
+                    lines: { show: true },
+                    fill: true,
+                    color: '#cc2222'
+                }
+            ];
+            var rscuFlotOptions = {
+                xaxis: { min: 0, max: 1 },
+                yaxis: { min: 0, max: 1 },
+                shadowSize: 0
+            };
+        </g:javascript>
+        <flot:plot id="container-flot" style="width: 500px; height: 500px;"
+            data="rscuFlotData" options="rscuFlotOptions"/>
+        <%-- TODO: Add axis labels with organism names --%>
+
     </div>
 </g:if>
 
