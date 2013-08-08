@@ -3,7 +3,8 @@ package webapp
 import org.apache.commons.logging.LogFactory
 
 class Organism {
-	private static final log = LogFactory.getLog(this)
+    static searchable = [only: ['scientificName']]
+    private static final log = LogFactory.getLog(this)
 	//genbankId if the sequence has one
 	String organismId
 	String taxonomyId
@@ -40,19 +41,19 @@ class Organism {
 
 		// (JGM) Entire maps separated by semicolons rather than commas.
 		// This is lazy string build coding.
-		s += (organismId + "," + scientificName + "," + taxonomyId + ",")
-		s += (completeGenome + "," + gcPercentage + ",")
-		for (e in taxonomy)
-			s += (e.getKey() + "," + e.getValue() + ",")
-		s -= ","
-		s += ";"
-		for (e in rscuCodonDistribution)
-			s += (e.getKey() + "," + e.getValue() + ",")
-		s -= ","
-		s += ";"
-		for (e in mcufCodonDistribution)
-			s += (e.getKey() + "," + e.getValue() + ",")
-		s -= ","
+		s += (organismId.toString() + "," + scientificName + "," + taxonomyId + ",")
+        s += (completeGenome.toString() + "," + gcPercentage + ",")
+        for (e in taxonomy)
+            s += (e.getKey() + "," + e.getValue() + ",")
+        s -= ","
+        s += ";"
+        for (e in rscuCodonDistribution)
+            s += (e.getKey() + "," + e.getValue() + ",")
+        s -= ","
+        s += ";"
+        for (e in mcufCodonDistribution)
+            s += (e.getKey() + "," + e.getValue() + ",")
+        s -= ","
 		return s
 	}
 }
