@@ -2,9 +2,10 @@ package webapp
 
 class SearchOrganismController {
 
+    static String WILDCARD = "*"
+
     def index() {
         def query = request.getParameter('query')
-        def sciNames = Organism.list().collect { it.scientificName }
         def matches = []
 
         if (query == null) {
@@ -12,7 +13,7 @@ class SearchOrganismController {
         }
 
         if (query.size() > 0) {
-            matches = sciNames.findAll { it.startsWith(query) }
+            matches = Organism.searchEvery(WILDCARD + query + WILDCARD).collect { it.scientificName }
         }
 
         render(contentType: "application/json") {
