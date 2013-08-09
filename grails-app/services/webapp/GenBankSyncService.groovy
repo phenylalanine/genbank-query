@@ -1,6 +1,8 @@
 package webapp
 
+import edu.pdx.cs.data.DNAParser
 import edu.pdx.cs.data.GenBankFTPClient
+import edu.pdx.cs.data.GenomeAssembly
 import edu.pdx.cs.data.OrganismProcessor
 import org.apache.commons.lang.NotImplementedException
 import org.apache.tools.tar.TarEntry
@@ -64,8 +66,48 @@ class GenBankSyncService {
      * and the genomes directory
      */
     void syncGenbankCompleteGenome() {
-        //TODO move this out of GenBankClient and into here
-        throw new NotImplementedException("The service does not yet provide this functionality")
+
+        GenBankFTPClient client = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
+        try {
+
+            client.getAllGenomeFiles().each { assembly ->
+                processGenomeAssembly(assembly)
+            }
+
+        } finally {
+            client.close()
+        }
+
+    }
+
+    /*
+     This method is supposed to take a GenomeAssembly object, download sequences, and process extracted RichSequences.
+    */
+
+    def void processGenomeAssembly(GenomeAssembly genome) {
+
+        genome.sequenceFiles.each { sequenceFile ->
+
+            def client = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
+            try {
+
+                def reader = client.readRemoteFile(sequenceFile)
+                RichSequenceIterator sequences = RichSequence.IOTools.readFastaDNA(reader, null)
+                // todo [FEATURE REQUEST] : make parser work with reader instead OF InputStream:
+                // RichSequenceIterator sequences = DNAParser.parseDNA(reader, null)
+
+                OrganismProcessor processor = new OrganismProcessor()
+
+                while (sequences.hasNext()) {
+                    processor.process(sequences.nextRichSequence())
+                }
+
+                client.close()
+
+            } catch (Exception e) {
+                log.warn("Error processing GenBank file: " + sequenceFile, e)
+            }
+        }
     }
 
     /**

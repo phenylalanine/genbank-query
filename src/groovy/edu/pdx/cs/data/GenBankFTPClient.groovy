@@ -30,15 +30,15 @@ class GenBankFTPClient {
     public static final GENBANK_FTP_URL = "ftp.ncbi.nih.gov"
     def EukTaxonomyFileEnding = "ASSEMBLY_INFO"
     def EukSequenceFileEnding = ".fa.gz"
-    def BacTaxonomyFileEnding = ".rpt"
-    def BacSequenceFileEnding = ".fna"
+    def BacTaxonomyFileEnding = ".rpt"      // Summary file extension for Bacteria AND Viruses
+    def BacSequenceFileEnding = ".fna"      // Sequence file extension for Bacteria AND Viruses
     private final FTPClient ftp
 
     GenBankFTPClient(String url) {
         ftp = getFtpClient(url)
     }
 
-    void close(){
+    void close() {
         ftp.disconnect()
     }
 
@@ -68,12 +68,12 @@ class GenBankFTPClient {
         }
     }
 
-    public void resyncNodeFiles(){
+    public void resyncNodeFiles() {
 
         // Download taxdmp archive from ftp://ftp.ncbi.nih.gov/pub/taxonomy/
         def ftp1 = getFtpClient(GENBANK_FTP_URL)
         def InputStream is = ftp1.retrieveFileStream("/pub/taxonomy/taxdump.tar.gz")
-        def TarInputStream tis = new TarInputStream(new GZIPInputStream (new BufferedInputStream(is)))
+        def TarInputStream tis = new TarInputStream(new GZIPInputStream(new BufferedInputStream(is)))
         TarEntry entry;
 
         // Extract and save nodes.dmp and names.dmp
@@ -98,7 +98,7 @@ class GenBankFTPClient {
 
     }
 
-    public NCBITaxon getTaxonomyInfo(int id){
+    public NCBITaxon getTaxonomyInfo(int id) {
 
         BufferedReader nodes = new BufferedReader(new FileReader("nodes.dmp"))
         BufferedReader names = new BufferedReader(new FileReader("names.dmp"))
@@ -111,9 +111,9 @@ class GenBankFTPClient {
         t = l.readName(names)
 
         // TODO: test on large numbers, see if there is heap memory problem
-        while(t != null){
+        while (t != null) {
 
-            if (t.NCBITaxID == id)  break;
+            if (t.NCBITaxID == id) break;
 
             t = l.readNode(nodes)
             t = l.readName(names)
@@ -122,7 +122,6 @@ class GenBankFTPClient {
 
         return t
     }
-
 
     /**
      * This will go out and get all of the sequences in the genbank directory
@@ -178,16 +177,17 @@ class GenBankFTPClient {
         return ftp
     }
 
-    def processAllGenomes() {
 
-        getAllEukaryaGenomeFiles().each { assembly ->
-            processGenomeAssembly(assembly)
-        }
+    def List<GenomeAssembly> getAllGenomeFiles() {
 
-        getAllBacteriaGenomeFiles().each { assembly ->
-            processGenomeAssembly(assembly)
-        }
+        def List<GenomeAssembly> bac = getAllBacteriaGenomeFiles()
+        def List<GenomeAssembly> euk = getAllEukaryaGenomeFiles()
+        def List<GenomeAssembly> vir = getAllViralGenomeFiles()
+
+        return bac + euk + vir
+
     }
+
 
 /** Relevant info here: ftp://ftp.ncbi.nlm.nih.gov/genomes/Bacteria/ReadMe.txt
  "The data for individual microbial genomes are contained in separate folders.
@@ -211,6 +211,21 @@ class GenBankFTPClient {
 
         // visit folder and find all related files
         def fileList = recursivelyGetAllFilesInDirectory(bac) {
+            it.name.endsWith(BacSequenceFileEnding) or it.name.endsWith(BacTaxonomyFileEnding)
+        }
+
+        return createGenomeAssemblyObjects(fileList, false)
+    }
+
+    /*
+        Same as Bacteria, only for Viruses
+     */
+    def List<GenomeAssembly> getAllViralGenomeFiles() {
+
+        def vir = "genomes/Viruses"
+
+        // visit folder and find all related files
+        def fileList = recursivelyGetAllFilesInDirectory(vir) {
             it.name.endsWith(BacSequenceFileEnding) or it.name.endsWith(BacTaxonomyFileEnding)
         }
 
@@ -326,44 +341,6 @@ class GenBankFTPClient {
         return genomes
     }
 
-/*
-  This method is supposed to take a GenomeAssembly object, download sequences, and process extracted RichSequences.
- */
-
-    def void processGenomeAssembly(GenomeAssembly genome) {
-
-        def RichSequenceIterator iterator
-        def id = getTaxonomyIDfromAssemblyInfo(genome.taxonomyFile)
-        // def NCBITaxon taxon = getTaxonomyForId(id)
-
-        genome.sequenceFiles.each { sequenceFile ->
-            def ftp1 = getFtpClient(GENBANK_FTP_URL)
-            try {
-
-                def is
-                if (genome.isEukarya)
-                    is = new GZIPInputStream(ftp1.retrieveFileStream(sequenceFile))
-                else
-                    is = new BufferedInputStream(ftp1.retrieveFileStream(sequenceFile))
-
-                def reader = new BufferedReader(new InputStreamReader(is))
-                iterator = RichSequence.IOTools.readFastaDNA(reader, null)
-
-                // todo: associate taxon with each sequence in the iterator? (.setTaxon(taxon))
-                // (not sure if it's possible). Alternatively, the GI number that comes
-                // with every FASTA file can be tracked down to a taxon in the future
-
-                // here processing happens
-                //TODO add persistence
-
-                is.close()
-                ftp1.disconnect()
-
-            } catch (Exception e) {
-                log.warn("Error processing GenBank file: " + sequenceFile, e)
-            }
-        }
-    }
 
     def private getTaxonomyIDfromAssemblyInfo(String assemblyFileName) {
 

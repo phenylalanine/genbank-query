@@ -48,7 +48,7 @@ class GenBankFTPClientTest {
 
 
     @Test
-    void testCreateGenomeAssemblyObjectsProcessGenomeFilesEuk() {
+    void testCreateGenomeAssemblyObjectsEuk() {
 
         def genbankClient = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
 
@@ -111,7 +111,7 @@ class GenBankFTPClientTest {
     }
 
     @Test
-    void testCreateGenomeAssemblyObjectsProcessGenomeFilesBac() {
+    void testCreateGenomeAssemblyObjectsBac() {
 
         def genbankClient = new GenBankFTPClient(GenBankFTPClient.GENBANK_FTP_URL)
         def fileList = [
