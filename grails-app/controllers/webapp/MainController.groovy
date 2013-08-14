@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils
 import org.biojava.bio.seq.DNATools
 import org.biojavax.bio.seq.RichSequence
 import org.springframework.web.multipart.MultipartFile
+import org.apache.shiro.SecurityUtils
 
 class MainController {
     static layout = "main"

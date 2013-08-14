@@ -1,3 +1,4 @@
+<%@ page import="org.apache.shiro.SecurityUtils" %>
 <%--
   Created by IntelliJ IDEA.
   User: Joseph Lee <josel@pdx.edu>
@@ -63,7 +64,30 @@
     --%>
     <div class="masthead">
         <ul class="nav nav-pills pull-right">
+            <g:if test="${SecurityUtils.subject.isPermitted("admin")}">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" href="#">
+                        admin
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li>
+                            <g:link controller="admin" action="index">Admin Page</g:link>
+                        </li>
+                        <li>
+                            <g:link controller="auth" action="signOut">Log Out</g:link>
+                        </li>
+                    </ul>
+                </li>
+            </g:if>
+            <g:else>
+                <li>
+                    <g:link controller="auth" action="login">Log in</g:link>
+                </li>
+            </g:else>
+
             <li><a href="#" id="upload-nav">Analyze Sequences</a></li>
+
             <li>
                 <form class="navbar-search">
                     <input type="text" class="search-query" placeholder="Search Organisms" autocomplete="off">

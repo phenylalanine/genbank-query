@@ -1,5 +1,7 @@
 package webapp
 
+import org.apache.shiro.SecurityUtils
+
 class AdminController {
     def genBankSyncService
 
@@ -8,7 +10,11 @@ class AdminController {
         def genbankVersion = genBankSyncService.currentGenBankReleaseVersion
         def syncedVersion = grailsApplication.config.genbank.version
 
-        render(view: "adminPage", model:[genbankVersion:genbankVersion, syncedVersion:syncedVersion])
-
+        if (SecurityUtils.subject.isPermitted("admin")) {
+            render(view: "adminPage", model:[genbankVersion:genbankVersion, syncedVersion:syncedVersion])
+        }
+        else {
+            response.sendError(403, "Forbidden")
+        }
     }
 }

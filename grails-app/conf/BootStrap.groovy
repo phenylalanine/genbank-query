@@ -14,6 +14,9 @@ import webapp.Organism
 import java.sql.Connection
 import java.sql.DriverManager
 
+import org.apache.shiro.crypto.hash.Sha512Hash
+
+
 class BootStrap {
     def init = { servletContext ->
         println "Application starting up... "
@@ -22,6 +25,7 @@ class BootStrap {
             test {
                 createBioSQLTables("jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
                 createFakeData()
+                createAdmin()
             }
             // (JGM) Use this environment to use test data stored on the file system.
             // E.g.: grails -Dgrails.env=persistentTest test-app -echoOut --stacktrace -integration edu.pdx.cs.data.ProcessorComparatorTests
@@ -35,6 +39,7 @@ class BootStrap {
             development {
                 createBioSQLTables("jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000")
                 createFakeData()
+                createAdmin()
             }
             production {
                 //we dont know what to do here just yet, we definitely don't want to drop
@@ -196,5 +201,12 @@ class BootStrap {
                 ).save(failOnError: true)
             }
         }
+    }
+
+    def createAdmin() {
+        def adminUser = new ShiroUser(username: "admin",
+                passwordHash: new Sha512Hash("password").toHex())
+        adminUser.addToPermissions("*:*")
+        adminUser.save()
     }
 }

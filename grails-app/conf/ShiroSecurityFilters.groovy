@@ -7,10 +7,11 @@ class ShiroSecurityFilters {
         all(uri: "/**") {
             before = {
                 // Ignore direct views (e.g. the default main index page).
-                if (!controllerName) return true
-
+                //if (!controllerName) return true
+                /* Disable default login */
+                return null
                 // Access control by convention.
-                accessControl()
+                //accessControl()
             }
         }
     }
