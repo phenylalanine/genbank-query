@@ -14,13 +14,16 @@ class MainController {
     def index() {
         def dataMap
         def organisms = []
+        def opt = []
 
         // Check number of params to decide to show modal on load
         if (flash.keySet().size() > 0) {
             organisms = flash.get("organisms")
+            opt = flash.get("opt")
         }
         dataMap = [
                 organisms: organisms,
+                opt: opt,
                 codonDistributions: organisms.collect { aminoDist(it) }
         ]
         if (organisms.size() == 2) {
@@ -40,6 +43,7 @@ class MainController {
         def MultipartFile userSeqFile0 = request.getFile("userSequenceFile0")
         def organismName1 = params.get("userOrganism1")
         def MultipartFile userSeqFile1 = request.getFile("userSequenceFile1")
+        def opt = params.get("opt")
 
         String sequenceString
         org.biojava.bio.seq.Sequence sequence
@@ -48,6 +52,7 @@ class MainController {
 
         //flash.organisms = []
         flash.put("organisms", [])
+        flash.put("opt", opt)
 
         def genbankOrganismName0 = params.get("genbankOrganism0")
         def genbankOrganismName1 = params.get("genbankOrganism1")

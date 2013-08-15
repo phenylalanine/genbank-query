@@ -73,7 +73,7 @@
     </div>
 </g:elseif>
 
-<g:if test="${organisms.size() > 0}">
+<g:if test="${(organisms.size() > 0) && opt && opt.contains("GC")}">
     <%-- GC Percentage --%>
     <div id="gc" class="row">
         <h2>GC Percentages</h2>
@@ -122,7 +122,7 @@
     </div>
 </g:if>
 
-<g:if test="${organisms.size() == 2}">
+<g:if test="${(organisms.size() == 2)  && opt && opt.contains("RSCU")}">
     <%-- RSCU Codon Analysis --%>
     <div class="row">
         <h2>RSCU Analysis</h2>
