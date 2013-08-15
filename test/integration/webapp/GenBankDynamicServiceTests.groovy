@@ -1,33 +1,18 @@
 package webapp
 
-import org.biojavax.bio.taxa.NCBITaxon
-import org.junit.Test
+import static org.junit.Assert.*
+import org.junit.*
 
-/**
- * Created with IntelliJ IDEA.
- * User: Ryan
- * Date: 8/5/13
- * Time: 4:50 PM
- * To change this template use File | Settings | File Templates.
- */
 class GenBankDynamicServiceTests {
 
-    @Test
-    void testClientRetrievesTaxonomyForTaxonomyId() {
-        def genbankDynamicSerivce = new GenBankDynamicService()
-
-        NCBITaxon taxon = genbankDynamicSerivce.getTaxonomyForId(1140)
-
-        assert taxon.containsName("no rank", "cellular organisms")
-        assert taxon.containsName("superkingdom", "Bacteria")
-        assert taxon.containsName("phylum", "Cyanobacteria")
-        assert taxon.containsName("order", "Chroococcales")
-        assert taxon.containsName("genus", "Synechococcus")
-        assert taxon.containsName("species", "Synechococcus elongatus")
-
-        assert taxon.parentNCBITaxID == 32046
-        assert taxon.NCBITaxID == 1140
-        assert taxon.geneticCode == 11
-        assert taxon.mitoGeneticCode == 0
-    }
+	@Test
+	void testGetIdsForScientificName() {
+		// (JGM) Searching for "rhesus macaque norovirus" (truncated).
+		// (This is a common name, so I don't know why it works in the scientific name field, but it does.)
+		// The asserts test the output from the query:
+		// http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&term=*rhesus+macaque+norov*&field=scientific+name
+		def ids = new GenBankDynamicService().getIdsForScientificName("rhesus macaque norov")
+		assert ids.size() == 1
+		assert ids[0] == 872275
+	}
 }
