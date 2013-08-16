@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<g:if test="${codonDistributions.size() == 0}">
+<g:if test="${organisms.size() == 0}">
     <script>
         // show modal if no data supplied yet
         $(document).ready(function() {
@@ -26,14 +26,12 @@
         });
     </script>
 </g:if>
-<g:elseif test="${codonDistributions.size() == 1}">
-    <%-- Single Sequence Analysis --%>
+<g:else>
     <%-- Codon Distribution --%>
     <div id="codon-dist">
         <%
             // Set options
             def codonDist = codonDistributions[0]
-            def columnHeaders = [['string', 'Codon'], ['number', 'Distribution']]
             def textStyle = [fontSize: 10]
             def titleTextStyle = [fontSize: 13]
             def options = [
@@ -48,6 +46,13 @@
             def codonList = codonDist.collectNested { it.name }
             def amino = null
 
+            def columnHeaders
+            if (organisms.size() == 1) {
+                columnHeaders = [['string', 'Codon'], ['number', 'Distribution']]
+            }
+            else {
+                columnHeaders = [['string', 'Codon'], ['number', 'Distribution1'], ['number', 'Distribution2']]
+            }
         %>
         <g:each in="${rowCounts}" var="r">
             <div class="row">
@@ -71,9 +76,7 @@
         </g:each>
 
     </div>
-</g:elseif>
 
-<g:if test="${organisms.size() > 0}">
     <%-- GC Percentage --%>
     <div id="gc" class="row">
         <h2>GC Percentages</h2>
@@ -120,7 +123,7 @@
             <% c = c + 1 %>
         </g:each>
     </div>
-</g:if>
+</g:else>
 
 <g:if test="${organisms.size() == 2}">
     <%-- RSCU Codon Analysis --%>
