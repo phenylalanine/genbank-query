@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<g:if test="${codonDistributions.size() == 0}">
+<g:if test="${organisms.size() == 0}">
     <script>
         // show modal if no data supplied yet
         $(document).ready(function() {
@@ -26,21 +26,21 @@
         });
     </script>
 </g:if>
-<g:elseif test="${codonDistributions.size() == 1}">
-    <%-- Single Sequence Analysis --%>
+<g:else>
     <%-- Codon Distribution --%>
     <div id="codon-dist">
+        <h2>Codon Distribution</h2>
         <%
             // Set options
-            def codonDist = codonDistributions[0]
-            def columnHeaders = [['string', 'Codon'], ['number', 'Distribution']]
+            def codonDist = codonDistributions
             def textStyle = [fontSize: 10]
             def titleTextStyle = [fontSize: 13]
             def options = [
                     vAxis: [maxValue: 1, minValue: 0, textStyle: textStyle],
                     hAxis: [textStyle: textStyle],
                     legend: [position: 'none'],
-                    chartArea: [top: 40, bottom: 0, left: 40, right: 0]
+                    chartArea: [top: 40, bottom: 0, left: 40, right: 0],
+                    colors: ['blue', 'orange']
             ]
             def rowCounts = [2, 3, 2, 2, 5, 4, 3, 2]    // Graph row lengths
             def c = 0
@@ -48,7 +48,25 @@
             def codonList = codonDist.collectNested { it.name }
             def amino = null
 
+            def columnHeaders
+            if (organisms.size() == 1) {
+                columnHeaders = [['string', 'Codon'], ['number', 'Distribution']]
+            }
+            else {
+                columnHeaders = [['string', 'Codon'], ['number', 'Distribution1'], ['number', 'Distribution2']]
+            }
         %>
+        <g:if test="${organisms.size() > 1}">
+            <%-- legend --%>
+            <div>
+                <div class="legendColor" style="background-color: ${options.colors[0]}"></div>
+                ${organisms[0].scientificName}
+            </div>
+            <div>
+                <div class="legendColor" style="background-color: ${options.colors[1]}"></div>
+                ${organisms[1].scientificName}
+            </div>
+        </g:if>
         <g:each in="${rowCounts}" var="r">
             <div class="row">
                 <% c = 0 %>
@@ -60,6 +78,7 @@
                     <gvisualization:columnCoreChart columns="${columnHeaders}" data="${amino.values}"
                         elementId="${"amino" + i.toString()}" title="${amino.name}" vAxis="${new Expando(options.vAxis)}"
                         legend="${'none'}" height="${200}" width="${40 + amino.values.size() * 80}"
+                        colors="${options.colors}"
                         titleTextStyle="${new Expando(titleTextStyle)}"
                         chartArea="${new Expando(options.chartArea)}" />
                     <%
@@ -71,56 +90,57 @@
         </g:each>
 
     </div>
-</g:elseif>
 
-<g:if test="${(organisms.size() > 0) && opt && opt.contains("GC")}">
-    <%-- GC Percentage --%>
-    <div id="gc" class="row">
-        <h2>GC Percentages</h2>
-        <div id="gcPie0" class="piechart float-left"></div>
-        <div id="gcText">
-            <%
-                c = 0
-                def percentage, split
-            %>
+    <g:if test="${opt && opt.contains("GC")}">
+        <%-- GC Percentage --%>
+        <div id="gc" class="row">
+            <h2>GC Percentages</h2>
+            <div id="gcPie0" class="piechart float-left"></div>
+            <div id="gcText">
+                <%
+                    c = 0
+                    def percentage, split
+                %>
+                <g:each in="${organisms}" var="organism">
+                    <%
+                        percentage = organism.gcPercentage
+                        if (percentage.length() > 5) {
+                            split = percentage.split(/\./)
+                            if (split[1].size() > 2 && new Integer(split[1][2]) >= 5) {
+                                percentage = split[0] + "." + split[1][0] + (new Integer(split[1][1]) + 1).toString()
+                            }
+                            else {
+                                percentage = split[0] + "." + split[1][0..1]
+                            }
+                        }
+                    %>
+                    <div id="${"gcPerc" + c.toString()}">
+                        ${organism.scientificName}: ${percentage}%
+                    </div>
+                    <% c = c + 1 %>
+                </g:each>
+            </div>
+            <div id="gcPie1" class="piechart float-right"></div>
+            <% c = 0 %>
             <g:each in="${organisms}" var="organism">
                 <%
-                    percentage = organism.gcPercentage
-                    if (percentage.length() > 5) {
-                        split = percentage.split(/\./)
-                        if (split[1].size() > 2 && new Integer(split[1][2]) >= 5) {
-                            percentage = split[0] + "." + split[1][0] + (new Integer(split[1][1]) + 1).toString()
-                        }
-                        else {
-                            percentage = split[0] + "." + split[1][0..1]
-                        }
-                    }
+                    def gcp = new BigDecimal(organism.gcPercentage)
+                    def gcData = [['With GC', gcp], ['Without GC', 100 - gcp]]
+                    columnHeaders = [['string', 'Codon'], ['number', 'Percentage']]
+                    options = [
+                            legend: [position: 'none']
+                    ]
                 %>
-                <div id="${"gcPerc" + c.toString()}">
-                    ${organism.scientificName}: ${percentage}%
-                </div>
+                <gvisualization:pieCoreChart elementId="${"gcPie" + c.toString()}"
+                    columns="${columnHeaders}" data="${gcData}"
+                    pieSliceText="${"none"}"
+                    width="${200}" height="${200}" legend="${"none"}"/>
                 <% c = c + 1 %>
             </g:each>
         </div>
-        <div id="gcPie1" class="piechart float-right"></div>
-        <% c = 0 %>
-        <g:each in="${organisms}" var="organism">
-            <%
-                def gcp = new BigDecimal(organism.gcPercentage)
-                def gcData = [['With GC', gcp], ['Without GC', 100 - gcp]]
-                columnHeaders = [['string', 'Codon'], ['number', 'Percentage']]
-                options = [
-                        legend: [position: 'none']
-                ]
-            %>
-            <gvisualization:pieCoreChart elementId="${"gcPie" + c.toString()}"
-                columns="${columnHeaders}" data="${gcData}"
-                pieSliceText="${"none"}"
-                width="${200}" height="${200}" legend="${"none"}"/>
-            <% c = c + 1 %>
-        </g:each>
-    </div>
-</g:if>
+    </g:if>
+
+</g:else>
 
 <g:if test="${(organisms.size() == 2)  && opt && opt.contains("RSCU")}">
     <%-- RSCU Codon Analysis --%>

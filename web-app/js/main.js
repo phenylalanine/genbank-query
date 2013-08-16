@@ -87,7 +87,7 @@ function uploadButtonClick() {
     // Upload menu settings
     $('input[type=button].add-seq#upload').on('click', function(event) {
         var i = $('.upload-form-elem').length;
-        var newSeqElem = $('<div class="upload-form-elem" id = "upload-form-elem' + i + '">' +
+        var newSeqElem = $('<div class="upload-form-elem" id="upload-form-elem' + i + '">' +
             '<div class="control-group">' +
             '<button class="close" id="close' + i + '">×</button>' +
             '<label class="control-label" for="userSequenceFile' + i + '">Sequence File</label>' +
@@ -113,7 +113,7 @@ function uploadButtonClick() {
     // Upload menu settings
     $('input[type=button].add-seq#genbank').on('click', function(event) {
         var i = $('.upload-form-elem').length;
-        var newSeqElem = $('<div class="upload-form-elem" id = "upload-form-elem' + i + '">' +
+        var newSeqElem = $('<div class="upload-form-elem" id="upload-form-elem' + i + '">' +
             '<div class="control-group">' +
             '<button class="close" id="close' + i + '">×</button>' +
             '<label class="control-label" for="genbankOrganism' + i + '">Scientific Name</label>' +

@@ -17,14 +17,14 @@ class MainController {
         def opt = []
 
         // Check number of params to decide to show modal on load
-        if (flash.keySet().size() > 0) {
+        if (flash.containsKey("organisms")) {
             organisms = flash.get("organisms")
             opt = flash.get("opt")
         }
         dataMap = [
                 organisms: organisms,
                 opt: opt,
-                codonDistributions: organisms.collect { aminoDist(it) }
+                codonDistributions: aminoDist(organisms)
         ]
         if (organisms.size() == 2) {
             dataMap.put("rscuComp", new RSCUComparator(organisms[0], organisms[1]))
@@ -95,8 +95,8 @@ class MainController {
         }
     }
 
-    private def aminoDist(organism) {
-        def seqDist = organism.mcufCodonDistribution
+    private def aminoDist(organisms) {
+        def seqDist = organisms.collect{ it.mcufCodonDistribution }
         def aminoTable = [
                 "Phenylalanine": ["TTT", "TTC"],
                 "Leucine": ["TTA", "TTG", "CTT", "CTC", "CTA", "CTG"],
@@ -123,11 +123,17 @@ class MainController {
                 "Glycine": ["GGT", "GGC", "GGA", "GGG"]
         ]
         def dataTables = []
+        def rowVals, row
         for (amino in aminoTable) {
+            row = [name: amino.key]
+            rowVals = []
             dataTables.push([
                     name: amino.key,
-                    values: amino.value.collectNested { [it, seqDist[it.toLowerCase()]] },
+                    values: amino.value.collectNested { aminoVal ->
+                        [aminoVal] + seqDist.collect{ it[aminoVal.toLowerCase()] }
+                    },
             ])
+            row.put("values", rowVals)
         }
         return dataTables
     }
