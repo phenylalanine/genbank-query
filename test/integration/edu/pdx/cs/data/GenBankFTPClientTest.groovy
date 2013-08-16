@@ -18,14 +18,14 @@ class GenBankFTPClientTest {
 
         //check that we list the right # of dirs with no filter
         def fileList = genbankClient.getAllFilesInDirectory("genbank")
-        assert fileList.size() == 1892
+        assert fileList.size() > 0
 
         //check that we list the right # of dirs with filter
         fileList = genbankClient.getAllFilesInDirectory("genbank") { file ->
             file.name.endsWith("Number")
         }
 
-        assert fileList.size() == 1
+        assert fileList.size() > 0
         assert fileList[0] == "genbank/GB_Release_Number"
     }
 
