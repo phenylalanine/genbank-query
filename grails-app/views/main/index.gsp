@@ -142,6 +142,22 @@
 
 </g:else>
 
+<g:if test="${(organisms.size() == 2) && codonDifference}">
+    <%-- Codon Difference Analysis --%>
+    <div class="row">
+        <h2>Codon Difference</h2>
+        <%
+            columnHeaders = [['string', 'Sequence'], ['number', 'Difference']]
+            options = [vAxis: [maxValue: 1, minValue: 0]]
+        %>
+        <div id="codonDifference"></div>
+        <gvisualization:columnCoreChart columns="${columnHeaders}" data="${codonDifference}"
+            elementId="${"codonDifference"}" vAxis="${new Expando(options.vAxis)}"
+            legend="${'none'}" height="${400}" width="${938}"
+            titleTextStyle="${new Expando(titleTextStyle)}" />
+    </div>
+</g:if>
+
 <g:if test="${(organisms.size() == 2)  && opt && opt.contains("RSCU")}">
     <%-- RSCU Codon Analysis --%>
     <div class="row">

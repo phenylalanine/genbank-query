@@ -11,6 +11,32 @@ import org.apache.shiro.SecurityUtils
 class MainController {
     static layout = "main"
 
+    private def aminoTable = [
+            "Phenylalanine": ["TTT", "TTC"],
+            "Leucine": ["TTA", "TTG", "CTT", "CTC", "CTA", "CTG"],
+            "Isoleucine": ["ATT", "ATC", "ATA"],
+            "Methionine": ["ATG"],
+            "Valine": ["GTT", "GTC", "GTA", "GTG"],
+            "Serine": ["TCT", "TCC", "TCA", "TCG", "AGT", "AGC"],
+            "Proline": ["CCT", "CCC", "CCA", "CCG"],
+            "Threonine": ["ACT", "ACC", "ACA", "ACG"],
+            "Alanine": ["GCT", "GCC", "GCA", "GCG"],
+            "Tyrosine": ["TAT", "TAC"],
+            "Stop (Ochre)": ["TAA"],
+            "Stop (Amber)": ["TAG"],
+            "Histidine": ["CAT", "CAC"],
+            "Glutamine": ["CAA", "CAG"],
+            "Asparagine": ["AAT", "AAC"],
+            "Lysine": ["AAA", "AAG"],
+            "Aspartic Acid": ["GAT", "GAC"],
+            "Glutamic Acid": ["GAA", "GAG"],
+            "Cysteine": ["TGT", "TGC"],
+            "Stop (Opal)": ["TGA"],
+            "Tryptophan": ["TGG"],
+            "Arginine": ["CGT", "CGC", "CGA", "CGG", "AGA", "AGG"],
+            "Glycine": ["GGT", "GGC", "GGA", "GGG"]
+    ]
+
     def index() {
         def dataMap
         def organisms = []
@@ -24,10 +50,12 @@ class MainController {
         dataMap = [
                 organisms: organisms,
                 opt: opt,
-                codonDistributions: aminoDist(organisms)
+                codonDistributions: aminoDist(organisms),
+
         ]
         if (organisms.size() == 2) {
             dataMap.put("rscuComp", new RSCUComparator(organisms[0], organisms[1]))
+            dataMap.put("codonDifference", codonDifference(organisms))
         }
 
         render(view: "index", model: dataMap)
@@ -97,31 +125,7 @@ class MainController {
 
     private def aminoDist(organisms) {
         def seqDist = organisms.collect{ it.mcufCodonDistribution }
-        def aminoTable = [
-                "Phenylalanine": ["TTT", "TTC"],
-                "Leucine": ["TTA", "TTG", "CTT", "CTC", "CTA", "CTG"],
-                "Isoleucine": ["ATT", "ATC", "ATA"],
-                "Methionine": ["ATG"],
-                "Valine": ["GTT", "GTC", "GTA", "GTG"],
-                "Serine": ["TCT", "TCC", "TCA", "TCG", "AGT", "AGC"],
-                "Proline": ["CCT", "CCC", "CCA", "CCG"],
-                "Threonine": ["ACT", "ACC", "ACA", "ACG"],
-                "Alanine": ["GCT", "GCC", "GCA", "GCG"],
-                "Tyrosine": ["TAT", "TAC"],
-                "Stop (Ochre)": ["TAA"],
-                "Stop (Amber)": ["TAG"],
-                "Histidine": ["CAT", "CAC"],
-                "Glutamine": ["CAA", "CAG"],
-                "Asparagine": ["AAT", "AAC"],
-                "Lysine": ["AAA", "AAG"],
-                "Aspartic Acid": ["GAT", "GAC"],
-                "Glutamic Acid": ["GAA", "GAG"],
-                "Cysteine": ["TGT", "TGC"],
-                "Stop (Opal)": ["TGA"],
-                "Tryptophan": ["TGG"],
-                "Arginine": ["CGT", "CGC", "CGA", "CGG", "AGA", "AGG"],
-                "Glycine": ["GGT", "GGC", "GGA", "GGG"]
-        ]
+
         def dataTables = []
         def rowVals, row
         for (amino in aminoTable) {
@@ -136,6 +140,28 @@ class MainController {
             row.put("values", rowVals)
         }
         return dataTables
+    }
+
+    /*
+    Generate data table for codon difference chart
+     */
+    def codonDifference(organisms) {
+        def tcag = ['T', 'C', 'A', 'G']
+        def triples = []
+        def data = []
+        for (i in tcag) {
+            for (j in tcag) {
+                for (k in tcag) {
+                    triples.push(i + j + k)
+                }
+            }
+        }
+        for (seq in triples) {
+            data.push([seq,
+                    Math.abs(new BigDecimal(organisms[0].mcufCodonDistribution[seq.toLowerCase()]) -
+                            new BigDecimal(organisms[1].mcufCodonDistribution[seq.toLowerCase()]))])
+        }
+        return data
     }
 
     /*
