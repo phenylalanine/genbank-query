@@ -29,16 +29,18 @@
 <g:else>
     <%-- Codon Distribution --%>
     <div id="codon-dist">
+        <h2>Codon Distribution</h2>
         <%
             // Set options
-            def codonDist = codonDistributions[0]
+            def codonDist = codonDistributions
             def textStyle = [fontSize: 10]
             def titleTextStyle = [fontSize: 13]
             def options = [
                     vAxis: [maxValue: 1, minValue: 0, textStyle: textStyle],
                     hAxis: [textStyle: textStyle],
                     legend: [position: 'none'],
-                    chartArea: [top: 40, bottom: 0, left: 40, right: 0]
+                    chartArea: [top: 40, bottom: 0, left: 40, right: 0],
+                    colors: ['blue', 'orange']
             ]
             def rowCounts = [2, 3, 2, 2, 5, 4, 3, 2]    // Graph row lengths
             def c = 0
@@ -54,6 +56,17 @@
                 columnHeaders = [['string', 'Codon'], ['number', 'Distribution1'], ['number', 'Distribution2']]
             }
         %>
+        <g:if test="${organisms.size() > 1}">
+            <%-- legend --%>
+            <div>
+                <div class="legendColor" style="background-color: ${options.colors[0]}"></div>
+                ${organisms[0].scientificName}
+            </div>
+            <div>
+                <div class="legendColor" style="background-color: ${options.colors[1]}"></div>
+                ${organisms[1].scientificName}
+            </div>
+        </g:if>
         <g:each in="${rowCounts}" var="r">
             <div class="row">
                 <% c = 0 %>
@@ -65,6 +78,7 @@
                     <gvisualization:columnCoreChart columns="${columnHeaders}" data="${amino.values}"
                         elementId="${"amino" + i.toString()}" title="${amino.name}" vAxis="${new Expando(options.vAxis)}"
                         legend="${'none'}" height="${200}" width="${40 + amino.values.size() * 80}"
+                        colors="${options.colors}"
                         titleTextStyle="${new Expando(titleTextStyle)}"
                         chartArea="${new Expando(options.chartArea)}" />
                     <%
