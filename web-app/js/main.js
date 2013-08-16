@@ -28,7 +28,7 @@ function uploadButtonClick() {
     // options control
     $('#upload-form-opt').remove();
     if (uploadFormElems.length >= 2) {
-        newOpt = $('<div id="upload-form-opt">' +
+        newOpt = $('<div id="upload-form-opt"><h3>Analysis Options</h3>' +
             '<label class="checkbox" >' +
             '<input type="checkbox" name="opt" value="MCUF" checked="true"> MCUF' +
             '</label>' +
@@ -44,7 +44,7 @@ function uploadButtonClick() {
     }
     else {
         if (uploadFormElems.length == 1) {
-            newOpt = $('<div id="upload-form-opt">' +
+            newOpt = $('<div id="upload-form-opt"><h3>Analysis Options</h3>' +
                 '<label class="checkbox" >' +
                 '<input type="checkbox" name="opt" value="MCUF" checked="true"> MCUF' +
                 '</label>' +
