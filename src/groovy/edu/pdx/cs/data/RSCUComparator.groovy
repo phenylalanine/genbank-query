@@ -78,7 +78,7 @@ class RSCUComparator {
 		slopeDenominator = distSize.multiply(sumXSquares, MathContext.UNLIMITED)
 			.subtract(sumXValues.pow(2, MathContext.UNLIMITED), MathContext.UNLIMITED)
 		slope = slopeNumerator.divide(slopeDenominator, bigDecimalScale, BigDecimal.ROUND_HALF_UP)
-		yIntercept = (sumYValues.subtract(slope.multiply(sumYValues, MathContext.UNLIMITED), MathContext.UNLIMITED))
+		yIntercept = (sumYValues.subtract(slope.multiply(sumXValues, MathContext.UNLIMITED), MathContext.UNLIMITED))
 			.divide(distSize, bigDecimalScale, BigDecimal.ROUND_HALF_UP)
 		
 		trendlineSlope = slope
