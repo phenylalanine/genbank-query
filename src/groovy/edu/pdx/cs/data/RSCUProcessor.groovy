@@ -20,6 +20,10 @@ public class RSCUProcessor implements Processor<Map<String, String>> {
     @Override
     Map<String, String> process(RichSequence richSequence) {
         def sequence = richSequence.seqString()
+
+        // take out possible extra letters
+        sequence = BioConstants.removeExtra(sequence)
+
         def len = sequence.length()
         def counts = [:]
         def rscuDistribution = [:]

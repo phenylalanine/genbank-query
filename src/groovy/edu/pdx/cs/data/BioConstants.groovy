@@ -6,6 +6,8 @@
 
 package edu.pdx.cs.data
 
+import org.apache.commons.lang.StringUtils
+
 class BioConstants {
 	// DNA codons, with codons listed in standard genetic code order (TCAG table).
 	public static final String TTT = "ttt"
@@ -214,4 +216,20 @@ class BioConstants {
         Val: [GTT, GTC, GTA, GTG],
         Stop: [TAA, TGA, TAG]
     ]
+
+    // strips out possible letters that aren't A,T,G, or C
+    public static String removeExtra(String seq) {
+        seq = StringUtils.remove(seq, "n")
+        seq = StringUtils.remove(seq, "m")
+        seq = StringUtils.remove(seq, "r")
+        seq = StringUtils.remove(seq, "w")
+        seq = StringUtils.remove(seq, "s")
+        seq = StringUtils.remove(seq, "y")
+        seq = StringUtils.remove(seq, "k")
+        seq = StringUtils.remove(seq, "v")
+        seq = StringUtils.remove(seq, "h")
+        seq = StringUtils.remove(seq, "d")
+        seq = StringUtils.remove(seq, "b")
+        return seq
+    }
 }

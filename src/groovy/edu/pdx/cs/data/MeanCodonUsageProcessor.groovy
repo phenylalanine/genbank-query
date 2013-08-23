@@ -22,6 +22,9 @@ class MeanCodonUsageProcessor implements Processor<Map<String, String>> {
         def String tempStr
         def String sequence = richSequence.seqString()
 
+        // take out possible extra letters
+        sequence = BioConstants.removeExtra(sequence)
+
         // map to hold counts
         def counts = [
                 ttt: 0, ttc: 0, tta: 0, ttg: 0,
