@@ -81,4 +81,9 @@ class MaybeCompressedInputStream extends InputStream {
     int read() throws IOException {
         return maybeCompressed.read();
     }
+
+    @Override
+    BufferedReader newReader() {
+        return maybeCompressed.newReader()
+    }
 }

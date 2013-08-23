@@ -1,10 +1,11 @@
 package webapp
 
+import edu.pdx.cs.data.DNAParser
+import edu.pdx.cs.data.MaybeCompressedInputStream
 import edu.pdx.cs.data.OrganismProcessor
 import edu.pdx.cs.data.RSCUComparator
-import org.apache.commons.io.IOUtils
-import org.biojava.bio.seq.DNATools
 import org.biojavax.bio.seq.RichSequence
+import org.biojavax.bio.seq.RichSequenceIterator
 import org.springframework.web.multipart.MultipartFile
 import org.apache.shiro.SecurityUtils
 
@@ -73,8 +74,7 @@ class MainController {
         def MultipartFile userSeqFile1 = request.getFile("userSequenceFile1")
         def opt = params.get("opt")
 
-        String sequenceString
-        org.biojava.bio.seq.Sequence sequence
+        RichSequenceIterator rsIterator
         RichSequence richSequence
         def genbankOrganism
 
@@ -86,15 +86,13 @@ class MainController {
         def genbankOrganismName1 = params.get("genbankOrganism1")
 
         if (organismName0 && userSeqFile0) {
-            sequenceString = IOUtils.toString(userSeqFile0.inputStream, "UTF-8").trim()
-            sequence = DNATools.createDNASequence(sequenceString, organismName0)
-            richSequence = RichSequence.Tools.enrich(sequence)
+            rsIterator = DNAParser.parseDNA(new MaybeCompressedInputStream(userSeqFile0.inputStream), organismName0)
+            richSequence = rsIterator.nextRichSequence() // will only get the first one if there are more than one
             flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
         }
         if (organismName1 && userSeqFile1) {
-            sequenceString = IOUtils.toString(userSeqFile1.inputStream, "UTF-8").trim()
-            sequence = DNATools.createDNASequence(sequenceString, organismName1)
-            richSequence = RichSequence.Tools.enrich(sequence)
+            rsIterator = DNAParser.parseDNA(new MaybeCompressedInputStream(userSeqFile0.inputStream), organismName0)
+            richSequence = rsIterator.nextRichSequence() // will only get the first one if there are more than one
             flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
         }
         if (genbankOrganismName0) {

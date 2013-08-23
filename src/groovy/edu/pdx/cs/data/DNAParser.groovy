@@ -29,11 +29,11 @@ class DNAParser {
     public static RichSequenceIterator parseDNA(InputStream input, String organismName) {
         BufferedInputStream bInput = new BufferedInputStream(input)
         BufferedReader brInput
-        EMBLFormat embl = new EMBLFormat()
-        EMBLxmlFormat emblx = new EMBLxmlFormat()
+//        EMBLFormat embl = new EMBLFormat()
+//        EMBLxmlFormat emblx = new EMBLxmlFormat()
         FastaFormat fasta = new FastaFormat()
         GenbankFormat genbank = new GenbankFormat()
-        INSDseqFormat insd = new INSDseqFormat()
+//        INSDseqFormat insd = new INSDseqFormat()
 
         if (genbank.canRead(bInput)) {
             brInput = bInput.newReader()
@@ -43,18 +43,21 @@ class DNAParser {
             brInput = bInput.newReader()
             return IOTools.readFastaDNA(brInput, null)
         }
-        else if (embl.canRead(bInput)) {
-            brInput = bInput.newReader()
-            return IOTools.readEMBLDNA(brInput, null)
-        }
-        else if (emblx.canRead(bInput)) {
-            brInput = bInput.newReader()
-            return IOTools.readEMBLxmlDNA(brInput, null)
-        }
-        else if (insd.canRead(bInput)) {
-            brInput = bInput.newReader()
-            return IOTools.readINSDseqDNA(brInput, null)
-        }
+            // something wrong with this one- the returned
+            // RichStreamReader throws a null pointer exception on nextRichSequence()
+//        else if (embl.canRead(bInput)) {
+//            brInput = bInput.newReader()
+//            return IOTools.readEMBLDNA(brInput, null)
+//        }
+            // wasn't able to find samples of these file types to test
+//        else if (emblx.canRead(bInput)) {
+//            brInput = bInput.newReader()
+//            return IOTools.readEMBLxmlDNA(brInput, null)
+//        }
+//        else if (insd.canRead(bInput)) {
+//            brInput = bInput.newReader()
+//            return IOTools.readINSDseqDNA(brInput, null)
+//        }
         else { // this had better be a text file!
             String seqString
             org.biojava.bio.seq.Sequence sequence
