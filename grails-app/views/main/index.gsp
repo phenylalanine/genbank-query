@@ -19,12 +19,14 @@
 <body>
 
 <g:if test="${organisms.size() == 0}">
-    <script>
-        // show modal if no data supplied yet
-        $(document).ready(function() {
-            $('#upload').modal({ show: true });
-        });
-    </script>
+    <g:if test="${login != true}">
+        <script>
+            // show modal if no data supplied yet
+            $(document).ready(function() {
+                $('#upload').modal({ show: true });
+            });
+        </script>
+    </g:if>
 </g:if>
 <g:else>
     <%-- Codon Distribution --%>

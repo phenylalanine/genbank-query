@@ -41,9 +41,8 @@ function Init() {
                     imgVersion.src = "/webapp/static/images/lPg.gif";
                     imgVersion.title = "Updated";
                 }
-            } else {
-                // Do nothing!
             }
+
             return false;
         }
 }

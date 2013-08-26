@@ -24,7 +24,7 @@ class AuthController {
 
         // If a controller redirected to this page, redirect back
         // to it. Otherwise redirect to the root URI.
-        def targetUri = params.targetUri ?: "/"
+        def targetUri = params.targetUri ?: "/admin"
 
         // Handle requests saved by Shiro filters.
         def savedRequest = WebUtils.getSavedRequest(request)
@@ -39,6 +39,7 @@ class AuthController {
             // password is incorrect.
             SecurityUtils.subject.login(authToken)
 
+            flash.put("login", true)
             log.info "Redirecting to '${targetUri}'."
             redirect(uri: targetUri)
         }

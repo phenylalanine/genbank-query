@@ -60,6 +60,13 @@ class MainController {
             dataMap.put("codonDifference", codonDiff)
         }
 
+        if (flash.containsKey("login")) {
+            dataMap.put("login", true)
+        }
+        else {
+            dataMap.put("login", false)
+        }
+
         render(view: "index", model: dataMap)
     }
 

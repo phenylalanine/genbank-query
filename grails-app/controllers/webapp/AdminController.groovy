@@ -4,6 +4,7 @@ import org.apache.shiro.SecurityUtils
 
 class AdminController {
     def genBankSyncService
+    static layout = "main"
 
     def index() {
 
@@ -14,7 +15,7 @@ class AdminController {
             render(view: "adminPage", model:[genbankVersion:genbankVersion, syncedVersion:syncedVersion])
         }
         else {
-            response.sendError(403, "Forbidden")
+            redirect(controller: "auth", action: "index", params: [targetUri: "/admin"])
         }
     }
 }
