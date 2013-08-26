@@ -147,13 +147,24 @@
     <div class="row">
         <h2>Codon Difference</h2>
         <%
-            columnHeaders = [['string', 'Sequence'], ['number', 'Difference']]
-            options = [vAxis: [maxValue: 1, minValue: 0]]
+            columnHeaders = [['string', 'Sequence'], ['number', 'Difference'], ['number', 'Average']]
+            options = [
+                    vAxis: [maxValue: 1, minValue: 0],
+                    hAxis: [slantedTextAngle: 90,
+                            textStyle: [fontSize: 8],
+                            //showTextEvery: 1
+                    ],
+                    chartArea: [top: 40, bottom: 0, left: 40, right: 100],
+                    series: [1: [type: 'line']]
+            ]
         %>
         <div id="codonDifference"></div>
-        <gvisualization:columnCoreChart columns="${columnHeaders}" data="${codonDifference}"
-            elementId="${"codonDifference"}" vAxis="${new Expando(options.vAxis)}"
-            legend="${'none'}" height="${400}" width="${938}"
+        <gvisualization:comboCoreChart columns="${columnHeaders}" data="${codonDifference}"
+            elementId="${"codonDifference"}"
+            vAxis="${new Expando(options.vAxis)}" hAxis="${new Expando(options.hAxis)}"
+            chartArea="${new Expando(options.chartArea)}"
+            legend="${'in'}" height="${400}" width="${938}"
+            seriesType="${"bars"}" series="${new Expando(options.series)}"
             titleTextStyle="${new Expando(titleTextStyle)}" />
     </div>
 </g:if>

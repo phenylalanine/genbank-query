@@ -40,6 +40,7 @@ class MainController {
 
     def index() {
         def dataMap
+        def codonDiff
         def organisms = []
         def opt = []
 
@@ -55,8 +56,9 @@ class MainController {
 
         ]
         if (organisms.size() == 2) {
+            codonDiff = codonDifference(organisms)
             dataMap.put("rscuComp", new RSCUComparator(organisms[0], organisms[1]))
-            dataMap.put("codonDifference", codonDifference(organisms))
+            dataMap.put("codonDifference", codonDiff)
         }
 
         render(view: "index", model: dataMap)
@@ -147,6 +149,9 @@ class MainController {
         def tcag = ['T', 'C', 'A', 'G']
         def triples = []
         def data = []
+        def sum = 0
+        def diff
+        def avg
         for (i in tcag) {
             for (j in tcag) {
                 for (k in tcag) {
@@ -155,10 +160,16 @@ class MainController {
             }
         }
         for (seq in triples) {
-            data.push([seq,
-                    Math.abs(new BigDecimal(organisms[0].mcufCodonDistribution[seq.toLowerCase()]) -
-                            new BigDecimal(organisms[1].mcufCodonDistribution[seq.toLowerCase()]))])
+            diff = Math.abs(new BigDecimal(organisms[0].mcufCodonDistribution[seq.toLowerCase()]) -
+                    new BigDecimal(organisms[1].mcufCodonDistribution[seq.toLowerCase()]))
+            data.push([seq, diff])
+            sum += diff
         }
+        avg = sum / data.size()
+        for (row in data) {
+            row.push(avg)
+        }
+
         return data
     }
 
