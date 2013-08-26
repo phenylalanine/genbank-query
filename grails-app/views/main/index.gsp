@@ -29,26 +29,73 @@
 <g:else>
     <%-- Codon Distribution --%>
     <div id="codon-dist">
+        <div class="row">
         <h2>Codon Distribution</h2>
+
+        <%-- Main codon dist chart, all sequences with averages --%>
+        <%
+            def codonDist = codonDistribution
+            def columnHeaders
+            def options = [
+                    vAxis: [minValue: 0],
+                    hAxis: [slantedTextAngle: 90,
+                            textStyle: [fontSize: 8]
+                    ],
+                    chartArea: [top: 40, bottom: 0, left: 40, right: 100]
+            ]
+            if (organisms.size() == 1) {
+                columnHeaders = [
+                        ['string', 'Sequence'],
+                        ['number', organisms[0].scientificName],
+                        ['number', 'Average']
+                ]
+                options.put("series", [1: [type: 'line']])
+            }
+            else if (organisms.size() == 2) {
+                columnHeaders = [
+                        ['string', 'Sequence'],
+                        ['number', organisms[0].scientificName],
+                        ['number', organisms[1].scientificName],
+                        ['number', 'Mean (' + organisms[0].scientificName + ')'],
+                        ['number', 'Mean (' + organisms[1].scientificName + ')'],
+                ]
+                options.put("series", [2: [type: 'line'], 3: [type: 'line']])
+            }
+
+        %>
+        <div id="codonDist"></div>
+        <gvisualization:comboCoreChart columns="${columnHeaders}" data="${codonDist}"
+                                       elementId="${"codonDist"}"
+                                       vAxis="${new Expando(options.vAxis)}" hAxis="${new Expando(options.hAxis)}"
+                                       chartArea="${new Expando(options.chartArea)}"
+                                       legend="${'out'}" height="${400}" width="${938}"
+                                       seriesType="${"bars"}" series="${new Expando(options.series)}"
+                                       titleTextStyle="${new Expando(titleTextStyle)}" />
+
+
+        </div>
+
+        <div class="row">
+        <%-- Codon Distribution By Amino --%>
+        <h2>Codon Distribution by Amino Acid</h2>
         <%
             // Set options
-            def codonDist = codonDistributions
+            def codonDistByAmino = codonDistributionByAmino
             def textStyle = [fontSize: 10]
             def titleTextStyle = [fontSize: 13]
-            def options = [
+            options = [
                     vAxis: [maxValue: 1, minValue: 0, textStyle: textStyle],
                     hAxis: [textStyle: textStyle],
                     legend: [position: 'none'],
                     chartArea: [top: 40, bottom: 0, left: 40, right: 0],
-                    colors: ['blue', 'orange']
+                    colors: ['blue', 'red']
             ]
             def rowCounts = [2, 3, 2, 2, 3, 3, 4, 2]    // Graph row lengths
             def c = 0
             def i = 0
-            def codonList = codonDist.collectNested { it.name }
+            def codonList = codonDistByAmino.collectNested { it.name }
             def amino = null
 
-            def columnHeaders
             if (organisms.size() == 1) {
                 columnHeaders = [['string', 'Codon'], ['number', 'Distribution']]
             }
@@ -67,12 +114,13 @@
                 ${organisms[1].scientificName}
             </div>
         </g:if>
+
         <g:each in="${rowCounts}" var="r">
             <div class="row">
                 <% c = 0 %>
                 <g:while test="${c < r}">
                     <%
-                        amino = codonDist[i]
+                        amino = codonDistByAmino[i]
                     %>
                     <div class="dist-graph" id="${"amino" + i.toString()}"></div>
                     <gvisualization:columnCoreChart columns="${columnHeaders}" data="${amino.values}"
@@ -88,7 +136,7 @@
                 </g:while>
             </div>
         </g:each>
-
+        </div>
     </div>
 
     <g:if test="${opt && opt.contains("GC")}">
@@ -151,8 +199,7 @@
             options = [
                     vAxis: [maxValue: 1, minValue: 0],
                     hAxis: [slantedTextAngle: 90,
-                            textStyle: [fontSize: 8],
-                            //showTextEvery: 1
+                            textStyle: [fontSize: 8]
                     ],
                     chartArea: [top: 40, bottom: 0, left: 40, right: 100],
                     series: [1: [type: 'line']]

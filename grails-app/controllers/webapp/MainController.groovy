@@ -50,9 +50,10 @@ class MainController {
         dataMap = [
                 organisms: organisms,
                 opt: opt,
-                codonDistributions: aminoDist(organisms),
-
+                codonDistribution: codonDistribution(organisms),
+                codonDistributionByAmino: codonDistributionByAmino(organisms)
         ]
+
         if (organisms.size() == 2) {
             codonDiff = codonDifference(organisms)
             dataMap.put("rscuComp", new RSCUComparator(organisms[0], organisms[1]))
@@ -121,7 +122,7 @@ class MainController {
         }
     }
 
-    private def aminoDist(organisms) {
+    private def codonDistributionByAmino(organisms) {
         def seqDist = organisms.collect{ it.mcufCodonDistribution }
 
         def dataTables = []
@@ -140,16 +141,45 @@ class MainController {
         return dataTables
     }
 
+    def codonDistribution(organisms) {
+        def seqDist = organisms.collect{ it.mcufCodonDistribution }
+        def row, rows = [], sums = []
+        def val, avgs = []
+
+        // init sums
+        for (int i = 0; i < seqDist.size(); i++) {
+            sums.push(0)
+        }
+
+        for (codon in codons()) {
+            row = [codon]
+            for (int i = 0; i < seqDist.size(); i++) {
+                val = new BigDecimal(seqDist[i][codon.toLowerCase()])
+                row.push(val)
+                sums[i] += val
+            }
+            rows.push(row)
+        }
+        for (int i = 0; i < sums.size(); i++) {
+            avgs.push(sums[i] / rows.size())
+        }
+
+        for (r in rows) {
+            for (a in avgs) {
+                r.push(a)
+            }
+        }
+
+        return rows
+    }
+
     /*
-    Generate data table for codon difference chart
+    Generate ordered triples of each codon
      */
-    def codonDifference(organisms) {
+    def codons() {
         def tcag = ['T', 'C', 'A', 'G']
         def triples = []
-        def data = []
-        def sum = 0
-        def diff
-        def avg
+
         for (i in tcag) {
             for (j in tcag) {
                 for (k in tcag) {
@@ -157,6 +187,20 @@ class MainController {
                 }
             }
         }
+
+        return triples
+    }
+
+    /*
+    Generate data table for codon difference chart
+     */
+    def codonDifference(organisms) {
+        def triples = codons()
+        def data = []
+        def sum = 0
+        def diff
+        def avg
+
         for (seq in triples) {
             diff = Math.abs(new BigDecimal(organisms[0].mcufCodonDistribution[seq.toLowerCase()]) -
                     new BigDecimal(organisms[1].mcufCodonDistribution[seq.toLowerCase()]))
