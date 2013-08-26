@@ -42,7 +42,7 @@
                     chartArea: [top: 40, bottom: 0, left: 40, right: 0],
                     colors: ['blue', 'orange']
             ]
-            def rowCounts = [2, 3, 2, 2, 5, 4, 3, 2]    // Graph row lengths
+            def rowCounts = [2, 3, 2, 2, 3, 3, 4, 2]    // Graph row lengths
             def c = 0
             def i = 0
             def codonList = codonDist.collectNested { it.name }

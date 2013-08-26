@@ -23,8 +23,7 @@ class MainController {
             "Threonine": ["ACT", "ACC", "ACA", "ACG"],
             "Alanine": ["GCT", "GCC", "GCA", "GCG"],
             "Tyrosine": ["TAT", "TAC"],
-            "Stop (Ochre)": ["TAA"],
-            "Stop (Amber)": ["TAG"],
+            "Stop": ["TAA", "TAG", "TGA"],
             "Histidine": ["CAT", "CAC"],
             "Glutamine": ["CAA", "CAG"],
             "Asparagine": ["AAT", "AAC"],
@@ -32,7 +31,6 @@ class MainController {
             "Aspartic Acid": ["GAT", "GAC"],
             "Glutamic Acid": ["GAA", "GAG"],
             "Cysteine": ["TGT", "TGC"],
-            "Stop (Opal)": ["TGA"],
             "Tryptophan": ["TGG"],
             "Arginine": ["CGT", "CGC", "CGA", "CGG", "AGA", "AGG"],
             "Glycine": ["GGT", "GGC", "GGA", "GGG"]
