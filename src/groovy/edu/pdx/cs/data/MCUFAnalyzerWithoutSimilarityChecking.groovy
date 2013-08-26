@@ -49,7 +49,7 @@ class MCUFAnalyzerWithoutSimilarityChecking {
 		def textFile = new File(fileName)
 
 		textFile.withWriter { out ->
-			out.writeLine("Organism ID, Scientific Name, Taxonomy ID, MCUF")
+			out.writeLine("Organism ID, Scientific Name, Taxonomy ID, MCUF Difference")
 			for (item in comparisonResults) {
 				out.writeLine(item.org2OrganismId + ", " + item.org2ScientificName + ", " + item.org2TaxonomyId
 					+ ", " + item.mcuf)

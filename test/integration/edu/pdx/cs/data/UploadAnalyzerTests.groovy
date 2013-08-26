@@ -6,11 +6,13 @@
 
 package edu.pdx.cs.data
 
+import org.junit.Ignore
 import org.junit.Test;
 import webapp.Organism
 
 class UploadAnalyzerTests {
 
+	@Ignore
 	@Test
 	// (JGM) Verify by examining any sent and received email in appropriate accounts.
 	void testUploadAnalysis() {
