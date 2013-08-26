@@ -255,7 +255,10 @@
             var rscuFlotOptions = {
                 xaxis: { min: 0, max: 1 },
                 yaxis: { min: 0, max: 1 },
-                shadowSize: 0
+                shadowSize: 0,
+                grid: {
+                    borderWidth: 0
+                }
             };
         </g:javascript>
         <flot:plot id="container-flot" style="width: 500px; height: 500px;"
