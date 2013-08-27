@@ -51,7 +51,7 @@
             <div class="add-upload" style="text-align: center">
                 <input type="button" id="upload" class="btn add-seq" value="Add Custom Sequence"/>
                 <input type="button" id="genbank" class="btn add-seq" value="Add GenBank Sequence"/>
-                <input type="submit" class="btn btn-submit" disabled/>
+                <input type="submit" id="upload-submit" class="btn btn-submit" disabled/>
             </div>
         </g:uploadForm>
     </div>
@@ -92,7 +92,8 @@
 
             <li>
                 <form class="navbar-search">
-                    <input type="text" class="search-query" placeholder="Search Organisms" autocomplete="off">
+                    <input type="text" class="search-query" id="quick-search"
+                           placeholder="Organism Quick Search" autocomplete="off">
                 </form>
             </li>
         </ul>

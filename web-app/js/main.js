@@ -135,4 +135,12 @@ function uploadButtonClick() {
 
     // Autocompletion for organism name search text
     $('.search-query').typeahead(typeaheadOptions);
+    $('.navbar-search').on('submit', function(e) {
+        e.preventDefault();
+        var organismName = $('#quick-search').val();
+        $('input[type=button].add-seq#genbank').click();
+        $('#upload-form input[name=genbankOrganism0]').val(organismName);
+        $('#upload-form').submit();
+    });
+
 })(jQuery);
