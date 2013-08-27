@@ -269,5 +269,9 @@
     </div>
 </g:if>
 
+<g:if test="${organisms.size() > 0}">
+    <hr/>
+</g:if>
+
 </body>
 </html>

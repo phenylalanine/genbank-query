@@ -94,16 +94,21 @@
                 </form>
             </li>
         </ul>
-        <h2 class="muted">GenBank-Query
+        <h1 class="muted">
+            <a href="/webapp">GenBank-Query</a>
             <a href="http://github.com/phenylalanine/genbank-query">
             <r:img uri="/images/GitHub-Mark-32px.png" height="24px" width="24px" /></a>
-        </h2>
+        </h1>
     </div>
 
     <hr>
 
     <g:layoutBody/>
 
+    <p>Copyright © 2013 <a href="http://github.com/phenylalanine">Phenylalanine</a> &
+        <a href="http://www.pdx.edu/extreme-environments/">Center for Life in Extreme Environments, Portland State University</a><br/>
+    Content may be used and distributed under the <a href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>
+    unless otherwise noted.</p>
 </div>
 
 
