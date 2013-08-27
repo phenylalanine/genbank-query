@@ -64,6 +64,9 @@
     --%>
     <div class="masthead">
         <ul class="nav nav-pills pull-right">
+
+            <li class="active"><a href="#" id="upload-nav">Analyze Sequences</a></li>
+
             <g:if test="${SecurityUtils.subject.isPermitted("admin")}">
                 <li class="dropdown">
                     <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" href="#">
@@ -74,6 +77,7 @@
                         <li>
                             <g:link controller="admin" action="index">Admin Page</g:link>
                         </li>
+                        <li class="divider"></li>
                         <li>
                             <g:link controller="auth" action="signOut">Log Out</g:link>
                         </li>
@@ -85,8 +89,6 @@
                     <g:link controller="auth" action="login">Log in</g:link>
                 </li>
             </g:else>
-
-            <li><a href="#" id="upload-nav">Analyze Sequences</a></li>
 
             <li>
                 <form class="navbar-search">

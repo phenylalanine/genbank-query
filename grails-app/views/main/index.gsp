@@ -18,17 +18,8 @@
 </head>
 <body>
 
-<g:if test="${organisms.size() == 0}">
-    <g:if test="${login != true}">
-        <script>
-            // show modal if no data supplied yet
-            $(document).ready(function() {
-                $('#upload').modal({ show: true });
-            });
-        </script>
-    </g:if>
-</g:if>
-<g:else>
+<g:if test="${organisms.size() > 0}">
+
     <%-- Codon Distribution --%>
     <div id="codon-dist">
         <div class="row">
@@ -190,7 +181,7 @@
         </div>
     </g:if>
 
-</g:else>
+</g:if>
 
 <g:if test="${(organisms.size() == 2) && codonDifference}">
     <%-- Codon Difference Analysis --%>

@@ -41,6 +41,7 @@
             <input type="submit" name="syncGenbank" id="syncGenbank" value="Re-Sync" >
         </div>
 
+    <hr/>
 
     <g:javascript src='admin.js'>
         genbankVersion = ${version};

@@ -2,6 +2,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="layout" content="main" />
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}" type="text/css">
   <title>Login</title>
 </head>
 <body>
@@ -13,15 +14,15 @@
     <table>
       <tbody>
         <tr>
-          <td>Username:</td>
+          <td>Username: </td>
           <td><input type="text" name="username" value="${username}" /></td>
         </tr>
         <tr>
-          <td>Password:</td>
+          <td>Password: </td>
           <td><input type="password" name="password" value="" /></td>
         </tr>
         <tr>
-          <td>Remember me?:</td>
+          <td>Remember me: </td>
           <td><g:checkBox name="rememberMe" value="${rememberMe}" /></td>
         </tr>
         <tr>
@@ -31,5 +32,6 @@
       </tbody>
     </table>
   </g:form>
+  <hr/>
 </body>
 </html>
