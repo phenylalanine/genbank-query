@@ -12,7 +12,6 @@ import webapp.Organism
 
 class UploadAnalyzerTests {
 
-	@Ignore
 	@Test
 	// (JGM) Verify by examining any sent and received email in appropriate accounts.
 	void testUploadAnalysis() {
