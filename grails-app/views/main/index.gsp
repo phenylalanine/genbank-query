@@ -166,15 +166,17 @@
             <g:each in="${organisms}" var="organism">
                 <%
                     def gcp = new BigDecimal(organism.gcPercentage)
-                    def gcData = [['With GC', gcp], ['Without GC', 100 - gcp]]
+                    def gcData = [['GC', gcp], ['AT', 100 - gcp]]
                     columnHeaders = [['string', 'Codon'], ['number', 'Percentage']]
                     options = [
-                            legend: [position: 'none']
+                            legend: [position: 'none'],
+                            pieSliceText: 'label',
+                            pieSliceTextStyle: [fontSize: 12]
                     ]
                 %>
                 <gvisualization:pieCoreChart elementId="${"gcPie" + c.toString()}"
                     columns="${columnHeaders}" data="${gcData}"
-                    pieSliceText="${"none"}"
+                    pieSliceText="${"label"}" pieSliceTextStyle="${new Expando(options.pieSliceTextStyle)}"
                     width="${200}" height="${200}" legend="${"none"}"/>
                 <% c = c + 1 %>
             </g:each>
