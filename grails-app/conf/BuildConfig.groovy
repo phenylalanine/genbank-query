@@ -45,9 +45,9 @@ grails.project.dependency.resolution = {
         compile group: 'org.biojava', name: 'core', version: '1.8.+'
         compile group: 'org.biojava', name: 'biosql', version: '1.8.+'
         compile group: 'commons-net', name: 'commons-net', version: '3.2'
+        compile group: 'org.apache.commons', name: 'commons-email', version: '+'
         compile group: 'org.hsqldb', name: 'hsqldb', version: '2.3.0'
         compile group: 'org.hsqldb', name: 'sqltool', version: '2.3.0'
-
 
         test group: 'org.mockito', name: 'mockito-all', version: '+'
     }
