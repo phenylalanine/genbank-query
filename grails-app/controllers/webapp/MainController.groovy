@@ -42,6 +42,10 @@ class MainController {
         def organisms = []
         def opt = []
 
+        if (flash.containsKey("error")) {
+            response.sendError(400, flash.get("error").getMessage())
+        }
+
         // Check number of params to decide to show modal on load
         if (flash.containsKey("organisms")) {
             organisms = flash.get("organisms")
@@ -93,39 +97,44 @@ class MainController {
         def genbankOrganismName0 = params.get("genbankOrganism0")
         def genbankOrganismName1 = params.get("genbankOrganism1")
 
-        if (organismName0 && userSeqFile0) {
-            rsIterator = DNAParser.parseDNA(new MaybeCompressedInputStream(userSeqFile0.inputStream), organismName0)
-            richSequence = rsIterator.nextRichSequence() // will only get the first one if there are more than one
-            flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
-        }
-        if (organismName1 && userSeqFile1) {
-            rsIterator = DNAParser.parseDNA(new MaybeCompressedInputStream(userSeqFile0.inputStream), organismName0)
-            richSequence = rsIterator.nextRichSequence() // will only get the first one if there are more than one
-            flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
-        }
-        if (genbankOrganismName0) {
-            genbankOrganism = Organism.find { scientificName == genbankOrganismName0 }
-            if (genbankOrganism) {
-                flash.get("organisms").push(genbankOrganism)
+        try {
+
+            if (organismName0 && userSeqFile0) {
+                rsIterator = DNAParser.parseDNA(new MaybeCompressedInputStream(userSeqFile0.inputStream), organismName0)
+                richSequence = rsIterator.nextRichSequence() // will only get the first one if there are more than one
+                flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
             }
-        }
-        if (genbankOrganismName1) {
-            genbankOrganism = Organism.find { scientificName == genbankOrganismName1 }
-            if (genbankOrganism) {
-                flash.get("organisms").push(genbankOrganism)
+            if (organismName1 && userSeqFile1) {
+                rsIterator = DNAParser.parseDNA(new MaybeCompressedInputStream(userSeqFile0.inputStream), organismName0)
+                richSequence = rsIterator.nextRichSequence() // will only get the first one if there are more than one
+                flash.get("organisms").push(new OrganismProcessor(persist: false).process(richSequence))
             }
+            if (genbankOrganismName0) {
+                genbankOrganism = Organism.find { scientificName == genbankOrganismName0 }
+                if (genbankOrganism) {
+                    flash.get("organisms").push(genbankOrganism)
+                }
+            }
+            if (genbankOrganismName1) {
+                genbankOrganism = Organism.find { scientificName == genbankOrganismName1 }
+                if (genbankOrganism) {
+                    flash.get("organisms").push(genbankOrganism)
+                }
+            }
+
+            if (flash.get("organisms").size() > 2 || flash.get("organisms").size() < 1){
+                //response.sendError(400, "Please upload organisms according to the instructions")
+                throw new Exception("400: Please upload organisms according to the instructions")
+            }
+
         }
-
-        if (flash.get("organisms").size() > 2 || flash.get("organisms").size() < 1){
-            response.sendError(400, "Please upload organisms according to the instructions")
+        catch (e) {
+            flash.put("error", e)
         }
-
-        // TODO: add data from user selected domain class entry to RSCU results
-        // TODO: turn the codon distrobution into MCUF by comparing with stuff in domain class
-        // TODO: use results in a view
-
-        if (!response.committed) {
-            redirect(action: "index")
+        finally {
+            if (!response.committed) {
+                redirect(action: "index")
+            }
         }
     }
 
