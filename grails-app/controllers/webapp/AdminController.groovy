@@ -80,12 +80,10 @@ class AdminController {
 
         }
         catch (e) {
-            flash.put("error", e)
+            response.sendError(400, e.getMessage())
         }
-        finally {
-            if (!response.committed) {
-                redirect(controller: "main", action: "index")
-            }
+        if (!response.committed) {
+            redirect(controller: "main", action: "index")
         }
     }
 }

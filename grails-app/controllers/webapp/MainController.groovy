@@ -42,10 +42,6 @@ class MainController {
         def organisms = []
         def opt = []
 
-        if (flash.containsKey("error")) {
-            response.sendError(400, flash.get("error").getMessage())
-        }
-
         // Check number of params to decide to show modal on load
         if (flash.containsKey("organisms")) {
             organisms = flash.get("organisms")
@@ -129,12 +125,10 @@ class MainController {
 
         }
         catch (e) {
-            flash.put("error", e)
+            response.sendError(400, e.getMessage())
         }
-        finally {
-            if (!response.committed) {
-                redirect(action: "index")
-            }
+        if (!response.committed) {
+            redirect(action: "index")
         }
     }
 
