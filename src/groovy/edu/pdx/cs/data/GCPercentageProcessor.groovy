@@ -17,6 +17,10 @@ class GCPercentageProcessor implements Processor<String> {
     @Override
     String process(RichSequence richSequence) {
         def sequence = richSequence.seqString()
+
+        // take out possible extra letters
+        sequence = BioConstants.removeExtra(sequence)
+
         def g = sequence.count('g')
         def c = sequence.count('c')
         def num = new BigDecimal(g + c)
